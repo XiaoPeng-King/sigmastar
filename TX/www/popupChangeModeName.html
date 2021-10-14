@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+
+html{
+	margin:0;
+	padding:0;
+	min-width: 320px; /*页面最小宽度*/
+	max-width: 480px; /*页面最大宽度*/
+}
+
+body{	
+	width: auto; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	min-width: 320px; /*页面最小宽度*/
+	max-width: 480px; /*页面最大宽度*/
+	background-color:#262626;
+	padding:0;
+}
+
+div{
+	text-align:center;
+}
+
+.div{
+	/*background-color:#F00;*/
+	overflow:auto;
+	border-color:white; /*边框颜色*/
+	border: 1px;
+	border: #808080 solid thin; /*设置边框样式*/
+	background-color:#4d4d4d;
+}
+
+.div_mode-text{
+	height:35px;
+	
+}
+
+.TxSelectButton{
+	height: 100px;
+	width: 100%;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.inputChangeModeName{
+	height: 68px;
+	width: 40%;
+	background-color:#4d4d4d;
+	color: white;
+	appearance:none;
+	border-color:#4d4d4d; /*边框颜色*/
+	outline: none;
+	border: 0;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.ApplyButton{
+	height: 68px;
+	width: 15%;
+	visibility:hidden;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	font-weight:700; /*字体加粗100-900*/
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.CancelButton{
+	height: 68px;
+	width: 15%;
+	visibility:hidden;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	font-weight:700; /*字体加粗100-900*/
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.labelMode{
+	color: white;
+	font-size:0.8rem;	
+
+}
+
+</style>
+<script type="text/html" id="ModeRenameTag">
+  <div class="div_button">
+	 <div id="divBlock{{num}}" class="div">
+		<label class="labelMode" for="inputRxName{{num}}">MODE-{{num}}:</label>	
+		<input id="inputModeName{{num}}" class="inputChangeModeName" size="12" maxlength="12" onfocus="OnfocusMode('{{num}}');" onblur="OnblurMode('{{num}}');" value="">
+		<input id="ApplyButton{{num}}" class="ApplyButton" type="button" onclick="OnclickApplyButton('{{num}}');" value="OK"/>
+		<input id="CancelButton{{num}}" class="CancelButton" type="button" onclick="OnclickCancelButton('{{num}}')" value="CL">
+	<div>
+  </div>
+</script>
+<script >
+
+function LoopButton()
+{
+	for (var i=0; i<10; i++)
+	{
+		var tiganStr = $("#ModeRenameTag").html();
+		tiganStr = delHtmlTags(tiganStr, "{{num}}", num1[i]);
+		$(".ModeName").append(tiganStr);
+	}
+}
+
+function delHtmlTags(str, reallyDo, replaceWith)
+{
+	var e = new RegExp(reallyDo, "g");
+	words = str.replace(e, replaceWith);
+
+	return words;
+}
+
+function OnblurMode(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputModeName"+number;
+	var DivId = "divBlock"+number;
+	
+	document.getElementById(InputId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(ApplyId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(ApplyId).style.borderColor = "#4d4d4d"
+	document.getElementById(CancelId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(CancelId).style.borderColor = "#4d4d4d"
+	document.getElementById(DivId).style.backgroundColor = "#4d4d4d"
+}
+
+function OnfocusMode(number)
+{
+	//alert(number);
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputModeName"+number;
+	var DivId = "divBlock"+number;
+	
+	var i;
+	
+	for (i=0; i<10; i++)
+	{
+		ApplyId = "ApplyButton"+num1[i];
+		CancelId = "CancelButton"+num1[i];
+		document.getElementById(ApplyId).style.visibility = "hidden";
+		document.getElementById(CancelId).style.visibility = "hidden";
+	}
+	ApplyId = "ApplyButton"+number;
+	CancelId = "CancelButton"+number;
+	InputId = "inputModeName"+number;
+	
+	document.getElementById(ApplyId).style.visibility = "visible";
+	document.getElementById(ApplyId).style.backgroundColor = "green";
+	document.getElementById(ApplyId).style.borderColor = "green"
+	
+	document.getElementById(CancelId).style.visibility = "visible";
+	document.getElementById(CancelId).style.backgroundColor = "green";
+	document.getElementById(CancelId).style.borderColor = "green"
+	
+	document.getElementById(InputId).style.backgroundColor = "green";
+	document.getElementById(InputId).style.borderColor = "green";
+	document.getElementById(DivId).style.backgroundColor = "green"
+	//document.getElementById(InputId).style.backgroundColor
+	
+	//border-color:#4d4d4d; /*边框颜色*/
+	
+	//alert(num1);
+}
+
+function OnclickApplyButton(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputModeName"+number;
+	var ModeId, ret, name;
+	var orderNumber = Number(number);
+	var inputValue = document.getElementById(InputId).value;
+	var page = window.parent.currentRightPageNum;
+	console.log(orderNumber);
+	
+	if (orderNumber<=5)
+	{
+		ModeId = "Mode"+num1[orderNumber-1];
+	}
+	else
+	{
+		ModeId = "Mode"+num1[(orderNumber-6)];
+	}
+
+	if (''==inputValue)
+	{
+		name = "MODE-"+number;
+	}
+	else
+	{
+		name = inputValue;
+	}
+	ret = changeModeName(number, inputValue);
+	//console.log(ModeId);
+	if(1 == ret)
+	{
+		document.getElementById(ApplyId).style.visibility = "hidden";
+		document.getElementById(CancelId).style.visibility = "hidden";
+		window.parent.modeName[orderNumber-1] = inputValue;
+		//console.log(Math.ceil(orderNumber/5));
+		//console.log(page);
+		//console.log(orderNumber);
+		//console.log(window.parent.modeName[orderNumber-1]);
+		console.log(ModeId);
+		if ((Math.ceil(orderNumber/5)) == page)
+		{
+			window.parent.document.getElementById("myIframe_right").contentWindow.document.getElementById(ModeId).value = name;
+		}
+	}
+	else
+	{
+		document.getElementById(ApplyId).style.backgroundColor = "red";
+		document.getElementById(ApplyId).style.borderColor = "red";
+	}
+
+	//alert(inputValue);
+}
+
+function OnclickCancelButton(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputModeName"+number;
+	
+	document.getElementById(ApplyId).style.visibility = "hidden";
+	document.getElementById(CancelId).style.visibility = "hidden";
+	document.getElementById(InputId).value = '';
+	//alert(number);
+}
+
+function changModeNameInit()
+{
+	var inputModeNameId;
+	var name;
+
+	for (var i=0; i<10; i++)
+	{
+		inputModeNameId = "inputModeName"+num1[i];
+		name = window.parent.modeName[i];
+		//console.log(inputModeNameId);
+	
+		document.getElementById(inputModeNameId).value = name;	
+	}
+
+}
+</script>
+ 
+</head>
+<body class="" onload="changModeNameInit();">
+	<div class="ModeName">	
+		<script>
+			LoopButton();
+		</script>
+	</div>
+</body>
+</html>

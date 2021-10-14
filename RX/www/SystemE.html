@@ -1,0 +1,513 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=1.0, user-scalable=yes" />
+<HEAD>
+
+
+<style>
+	.cec_button{
+		height: 30px;
+		width: 95px;
+		font-size:15px;
+		background:rgb(107, 104, 104);
+		color:#fff;
+		border-radius:5px;
+	}
+	.cec_input{
+		height: 20px;
+		width: 230px;
+		background:rgb(240, 234, 234);
+	}
+</style>
+
+<META content="text/html; charset=utf-8" http-equiv="Content-Type">
+<TITLE>System settings-HD Encoder</TITLE>
+<link type="text/css" rel="stylesheet" href="css/form.css"/>
+<LINK rel="stylesheet" type="text/css" href="css/main.css">
+<script src="Js/jquery-1.4.1.min.js" type="text/javascript"></script>
+<script src="Js/platform.js" type="text/javascript"></script>
+<script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+<script type="text/javascript">   
+var hostip =window.location.host;
+
+function updateInfo() {
+	var menu_html = showMenuE("SystemE.html");
+   	$("#menu_bar").html(menu_html);
+	
+	$.ajax({
+    	type: "GET",
+    	url: "http://" + hostip + "/cgi-bin/get_sys.cgi",
+		dataType:"xml",
+    	cache: false,
+    	success: function(data) {
+
+			var fw_ver = $(data).find("swv").text();
+			$("#fw_ver").attr("value", fw_ver);
+
+			var hw_ver = $(data).find("hwv").text();
+			$("#hw_ver").attr("value", hw_ver);
+
+			var cec_off_code = $(data).find("cec_off_code").text();
+			$("#cec_off_code").attr("value", cec_off_code);
+
+			var cec_on_code = $(data).find("cec_on_code").text();
+			$("#cec_on_code").attr("value", cec_on_code);
+
+		}
+	});
+}
+
+function SetReset() {
+	if (confirm("After a reset will restore to factory settings, sure you want to reset it？")) {
+		$.ajax({ 
+			type:"GET",
+			url:"http://"+hostip+"/cgi-bin/sys_default.cgi",
+			dataType:"text",
+			cache:false,
+			success:function(data){
+				if(data=="succeed") {
+					alert('Setting Successful!');	
+				} else {
+					alert('Setting Failed!');	
+				}
+			}
+	    });
+	}
+}
+
+function SetReboot() {
+    document.write('Please wait about 10 seconds for system reboot...');
+	$.ajax({ 
+		type:"GET",
+        url:"http://"+hostip+"/cgi-bin/sys_reboot.cgi",
+        dataType:"text",
+        cache:false,
+        success:function(data){
+			if(data=="succeed") {
+				alert('Reboot succeed!');	
+			}
+        }
+    });
+
+}
+
+function SetReboot1(){
+	document.write(" ");
+	$.ajax({ 
+		type:"GET",
+		url:"http://"+hostip+"/cgi-bin/fail_reboot.cgi",
+		dataType:"text",
+		cache:false,
+		success:function(data){
+			if(data=="succeed") {
+			
+			}
+		}
+	});
+}
+
+function changeLan() {
+	var Language=$("#LanSle").val();
+	if(Language=='Chinese'){
+		$.ajax({ 
+			type:"GET",
+			url: "http://" + hostip + "/cgi-bin/set_sys.cgi?type=lang&lang=1",
+			dataType:"text",
+			cache:false
+		});
+		window.location.href='SystemE.html';
+	}
+}
+	 
+
+function updateBar() {
+	$("#upgrade").attr("disabled",true);
+    $("#topLoader").show();
+	var animateFunc = function() {
+		$.ajax({ 
+			type:"GET",
+			url:"http://"+hostip+"/cgi-bin/get_bar.cgi",
+			dataType:"text",
+			cache:false,
+			success:function(data){
+				var BarStep = parseInt(data);
+				if (BarStep > 0 && BarStep <= 100) {
+					$("#bar").width(BarStep + "%");
+					$("#bar").html(BarStep + "%");
+				}
+
+				if(BarStep < 100 && BarStep >=0) {
+					setTimeout(animateFunc, 20);
+				}
+			}
+		})
+	}
+	setTimeout(animateFunc, 25);
+}
+
+function getFileExtName(filepath) {
+	if (filepath != "") {
+		var names = filepath.split(".");
+		return names[names.length - 1];
+	}
+}
+	
+var success_dete;
+
+function gotoend(pro, value){
+		var value=value+1;
+		pro.value=value;
+		if(value<100){
+			var timer1 = setTimeout(function(){gotoend(pro, value);},720)
+		}
+		else{
+			if(success_dete == 1)
+			{
+				setTimeout(function(){alert("升级成功!\r\n\r\n如果没运行，检查文件名，再试一次")},20);
+			}
+			else{setTimeout(function(){alert("升级失败!\r\n\r\n请检查网线或者电源连接，再试一次")},20);}
+		}
+}
+
+var timer;
+
+function upload_file1()
+{
+	var state;
+	var upgrade= $("#upgrade").val();
+	upgrade=upgrade.replace("C:\\fakepath\\","");
+	if(upgrade==""){
+		alert("Select firmware file!");
+		return;
+	}
+	else if(upgrade=="web.tar.gz")
+	{
+		$.ajaxFileUpload({
+		type:"post",
+		url:"http://"+hostip+"/cgi-bin/upload_web.cgi",			
+		dataType:"text",
+		fileElementId:'upgrade',
+		cache:false,
+		success: function(data){
+			state = data;
+			console.log(state);
+			state = state.substring(0, 7);
+			console.log(state);
+			if (state =="succeed") 
+			{
+				alert('Successful, please reboot device');
+				//setTimeout(SetReboot(),30000);
+				SetReboot();
+			}
+			else
+			{
+			        alert('Successful, please reboot device  , try  ! ');
+			  //	alert('Failed, please try again!   ');
+				//timer=window.clearInterval(timer);	
+				//SetReboot();
+			}
+
+			$("#topLoader").hide();
+			$("#upgrade").attr("disabled",false);		
+
+			},
+		});
+	}
+	else if(upgrade=="rtsp-mdev-vpu0-vpp_pv")
+	{
+		$.ajaxFileUpload({
+		type:"post",
+		url:"http://"+hostip+"/cgi-bin/upload.cgi",			
+		dataType:"text",			
+		fileElementId:'upgrade',
+		cache:false,
+		success: function(data){
+			state = data;
+			state = state.substring(0, 7);
+			console.log(state);
+			if (state =="succeed") 
+			{
+				alert('Successful, please reboot device');
+				SetReboot();
+			}
+			else
+			{	
+				alert('Failed, please try again!');
+				//timer=window.clearInterval(timer);	
+				//SetReboot();
+			}
+
+			$("#topLoader").hide();
+			$("#upgrade").attr("disabled",false);		
+
+			},
+		});
+	}
+	else if(upgrade=="ko.tar.gz")
+	{
+		$.ajaxFileUpload({
+		type:"post",
+		url:"http://"+hostip+"/cgi-bin/upload_ko.cgi",			
+		dataType:"text",			
+		fileElementId:'upgrade',
+		cache:false,
+		success: function(data){
+			state = data;
+			state = state.substring(0, 7);
+			if (state =="succeed") 
+			{
+				alert('Successful, please reboot device');
+				setTimeout(SetReboot(),30000);
+				SetReboot();
+			}
+			else
+			{
+				alert('Failed, please try again!');
+				//timer=window.clearInterval(timer);	
+				//SetReboot();
+			}
+
+			$("#topLoader").hide();
+			$("#upgrade").attr("disabled",false);		
+
+			},
+		});
+	}
+	
+	else
+	{
+		alert('Failed, please select the correct file!');
+		return;
+	}
+	setTimeout(updateBar(),3000);
+}
+
+
+
+
+function upload_file(){	
+
+	var FILE1= $("#FILE1").val();	
+
+	if(FILE1==""){		
+
+	alert("请选择文件!");		
+
+	return;	
+
+	}
+	$.ajax({ 
+		type:"GET",
+		url:"http://"+hostip+"/cgi-bin/test1.cgi",
+		dataType:"text",
+		cache:false,
+		success:function(data){
+			if(data=="succeed") {
+			
+			}
+		}
+	});
+	var pro=document.getElementsByTagName("progress")[0];
+	gotoend(pro, 0);
+
+	/************************************************
+	 delay time
+	 *******************************************************/
+	timer=self.setTimeout("upload_file1()",50000); 
+	 /*******************************************************
+	 upload file
+		var pro=document.getElementsByTagName("progress")[0];
+		gotoend(pro, 0);
+	 *****************************************************/
+}
+
+function uploadFw() {
+	var upgrade= $("#upgrade").val();
+	if(upgrade==""){
+		alert("请选择上传文件！");
+		return;
+	}
+	else{
+
+		$.ajaxFileUpload({
+			type:"post",
+			url:"http://"+hostip+"/cgi-bin/upload.cgi",
+			dataType:"text",
+			fileElementId:'upgrade',
+			cache:false,
+			success: function(data){
+				if (data == "succeed") {
+					alert('升级成功，请重启系统！');
+				} else {
+					alert('上传失败！');
+				}
+				$("#topLoader").hide();
+				$("#upgrade").attr("disabled",false);
+			},
+		});
+	}
+	setTimeout(updateBar(),3000);
+}
+
+function CECon() {
+	var cecOnCode = $("#cec_on_code").val();
+
+	urlstr="http://"+hostip+"/cgi-bin/cec_on.cgi?cec_on_code="+cecOnCode;
+	
+	$.ajax({ 
+		type:"GET",
+		url:urlstr,
+		dataType:"text",
+		cache:false,
+		success:function(data){
+			if(data=="succeed"){
+				alert('Set successfully ！');
+			}else{
+				alert('Failed to set！');
+			}
+		}
+	});
+}
+
+function CECoff() {
+	var cecOffCode = $("#cec_off_code").val();
+
+	urlstr="http://"+hostip+"/cgi-bin/cec_off.cgi?cec_off_code="+cecOffCode+"&";
+
+	$.ajax({ 
+		type:"GET",
+		url:urlstr,
+		dataType:"text",
+		cache:false,
+		success:function(data){
+			if(data=="succeed"){
+				alert('Set successfully ！');
+			}else{
+				alert('Failed to set！');
+			}
+		}
+	});
+}
+
+
+</script>
+<META name="GENERATOR" content="MSHTML 9.00.8112.16457">
+</HEAD>
+<BODY onload="updateInfo()">
+<FORM METHOD="POST" id="form1" name="form1" ENCTYPE="multipart/form-data" ACTION="cgi-bin/upload.cgi" >
+ <div class="header">
+  <div class="header_b"> <a href="/" class="logo"><img src="css/cn/logo.jpg" /></a>
+   <p class="logo_v"> RX HD Encoder </p>
+   <div class="language">
+    <select onchange="changeLan()" id='LanSle'>
+     <option value="Chinese" selected="selected">Chinese</option>
+     <option value="English" >English</option>
+    </select>
+   </div>
+   <ul>
+    <li><a href="http://www.baidu.com/" target="_blank">Service and Support</a></li>
+   </ul>
+  </div>
+</div>
+ <dd id="menu_bar"></dd>
+ <DIV class="clear"></DIV>
+<DIV class="wrapper">
+ <h1 class="h1_SystemE">System</h1>
+<DIV class="content">
+   <DIV class="in author t_index_1">
+	   <H2>System information</H2>
+   </DIV>
+    <DIV class="in">
+     <div class="write">
+	 <dl>
+		<dt>Firmware ver:</dt>
+		<dd>
+		 <input name="fw_ver" disabled="disalbed" value ="" readonly = "true" type="text" maxlength="32" id="fw_ver">
+		</dd>
+	 </dl>
+	 <dl>
+		<dt>Hardware ver：</dt>
+		<dd>
+		 <input name="hw_ver" disabled="disalbed" value ="" readonly = "true" type="text" maxlength="32" id="hw_ver">
+		</dd>
+	 </dl>
+    </div>
+   </DIV>
+  </DIV>
+
+  <DIV class="content">
+   <DIV class="in author t_index_1">
+    <H2>Upgrade settings</H2>
+   </DIV>
+   <DIV class="in">
+    <div class="write">
+     <dl>
+      <dt>Upgrade system：</dt>
+      <dd>
+       <div id="container">
+        <div class="graph" id="topLoader" style="display:none; margin-bottom:5px;"> <strong id="bar" ></strong> </div>
+        <INPUT TYPE="FILE" NAME="FILE1" id="upgrade" class="btn" style=" border:none; background:none; height:26px;width:300px; margin-bottom:15px"/>
+        </div>
+			<!--progress value="0" max="1000">progress</progress>
+				<br/></br-->
+        <span style="color:#ff6500">(do not multip uploading, do not power off or refresh the page)</span>
+      </dd>
+     </dl>
+     <dl>
+      <dt>&nbsp;</dt>
+      <dd>
+       <INPUT TYPE="button" onclick="upload_file1()" value="Upload" class="com_btn_E b_shangchuanE"/>
+		<!--center>
+          <div id="uploadInfo"></div>
+        </center-->
+      </dd>
+     </dl>
+    </div>
+   </DIV>
+  </DIV>
+  <DIV class="content">
+   <DIV class="in author t_index_1">
+    <H2>System settings</H2>
+   </DIV>
+   <DIV class="in">
+    <div class="write">
+     <dl>
+      <dt>&nbsp;</dt>
+      <dd>
+       <input type="button" value="Reboot" name ="insert" class="com_btn_E b_chongqiE" onclick="SetReboot()"  id="subBut" />
+	   &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+       <input type="button" value="Reset" name ="insert" class="com_btn_E b_chongzhiE" onclick="SetReset()"  id="subBut" />
+      </dd>
+     </dl>
+    </div>
+   </DIV>
+  </DIV>
+
+  <DIV class="content">
+	<DIV class="in author t_index_1">
+	 <H2>CEC Control settings</H2>
+	</DIV>
+	<DIV class="in">
+	 <div class="write">
+		
+		<div align="center">
+			<input type="input" name="cec_on_code" value="" placeholder="default:40-04" class="cec_input" id="cec_on_code">
+			<button type="button" class="cec_button" onclick="CECon()">TV ON</button>
+		</div>
+		<dt>&nbsp;</dt>
+		<div align="center">
+			<input type="input" name="cec_off_code" value="" placeholder="default:ff-36" class="cec_input" id="cec_off_code">
+			<button type="button" class="cec_button" onclick="CECoff()">TV OFF</button>
+		</div>
+	
+	 </div>
+	</DIV>
+   </DIV>
+
+ </DIV>
+</form>
+</BODY>
+</HTML>

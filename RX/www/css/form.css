@@ -1,0 +1,75 @@
+/*form的一些操作*/
+input,textarea{border:1px #A2BAC0 solid;width:180px;height:16px;background:url() no-repeat scroll;padding:2px}
+input:focus{background-color:#F8FAFC}
+form .upload{height:20px;width:220px}
+.formItem{margin:0;padding:0}
+.formItem dl{float:left;height:36px;width:350px;line-height:36px;margin:0;padding:0}
+.formItem dt{float:left;width:100px;height:36px;line-height:36px;margin:0;padding:0}
+.formItem dd{float:left;width:240px;height:36px;line-height:36px;margin:0;padding:0}
+.formItem .editorpanle{width:100%;height:auto}
+.formItem .editorpanle dd{padding-top:6px;width:600px;height:auto}
+button{border:0;background:none;margin:0;padding:0}
+.button{background:url(../images/button/button.png) no-repeat;padding-left:5px;width:150px;float:left}
+.buttonContent
+{
+	color: #003366;
+	height: 24px;
+	padding-top: 7px;
+	padding-left:8px;
+	width: 60px;
+	cursor: pointer;
+}
+.buttonContent a{color:#003366;}
+        .hint
+        {
+            position: absolute;
+            width: 140px;
+            color:Red;
+            border: 1px solid #c93;
+            line-height:18px;
+            padding: 6px 8px;
+            display:none;
+        }
+        .hint .hint-pointer
+        {
+            position: absolute;
+            left:-10px;
+            top:5px;
+            width: 10px;
+            height: 19px;
+        }
+/*edit by cs*/
+.csformItem{margin:0;padding:0}
+.csformItem dl{float:left;height:24px;width:180px;line-height:24px;margin:0;padding:0}
+.csformItem dt{float:left;width:50px;height:24px;line-height:24px;margin:0;padding:0}
+.csformItem dd{float:left;width:100px;height:24px;line-height:24px;margin:0;padding:0}
+.csformItem .editorpanle{width:100%;height:auto}
+.csformItem .editorpanle dd{padding-top:6px;width:600px;height:auto}
+.csbuttonContent
+{
+	color: #003366;
+	height: 24px;
+	padding-top: 7px;
+	padding-left:8px;
+	width: 60px;
+	cursor: pointer;
+}
+.csbuttonContent a{color:#003366;}
+        .cshint
+        {
+            position: absolute;
+            width: 140px;
+            color:Red;
+            border: 1px solid #c93;
+            line-height:18px;
+            padding: 6px 8px;
+            display:none;
+        }
+        .cshint .hint-pointer
+        {
+            position: absolute;
+            left:-10px;
+            top:5px;
+            width: 10px;
+            height: 19px;
+        }

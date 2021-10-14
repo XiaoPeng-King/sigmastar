@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+ <!--link type="text/css" rel="stylesheet" href="css/form_control.css"-->
+ <!--link type="text/css" rel="stylesheet" href="css/main_control.css"/-->
+ <!--link type="text/css" rel="stylesheet" href="css/pickout.css"/-->
+ 
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <!--script type="text/javascript" src="Js/pickout.js"></script-->
+ <script type="text/javascript" src="Js/main.js"></script>
+ <!--style>
+		/*
+        body {
+			padding:30px;font-family: "微软雅黑";
+		}
+		*/
+        li {
+			list-style: none;
+		}
+		
+        *{
+			padding:0;margin:0;
+		}
+		
+        #selector {
+			position:relative;
+			height:30px;
+			width:210px;
+			font-size:13px;
+			line-height:30px;
+			text-align:left;
+			user-select:none;
+		}
+        
+		#selector select {
+			display:none;
+		} 
+        
+		#selector .arrow {
+			position:absolute; 
+			right:5px;
+			top:12px;
+			display:block;
+			height:0;
+			width:0;
+			border-top:8px solid red;
+			border-right:5px solid transparent;
+			border-left:5px solid transparent;
+		}
+        
+		#selector .mr-selector {
+			display:block;
+			height:30px;
+			width:200px;
+			padding-left:10px;
+			border:1px solid red;
+			cursor:default;
+		}
+        
+		#selector .select { 
+			display:none;
+			width:210px;
+			margin-top:-1px;
+			border:1px solid red;
+		}
+        
+		#selector .select li {
+			height:30px;
+			line-height:30px;
+			padding-left:10px;
+		}
+        
+		#selector .select li:hover {
+			background:red;
+			color:#fff;
+			cursor:default;
+		}
+    </style>
+    <title>selector插件</title>
+	<script>
+        (function(){
+
+            var selector = $("#selector");
+            var select = $("#selector .select");  //模拟select的ul选项
+            var mrSelector = $("#selector .mr-selector");
+            var li = $("#selector .select li"); //li选项
+
+            selector.click(function(eve){
+                eve.stopPropagation();   //阻止冒泡避免点击后消失    
+            });
+
+            mrSelector.click(function(){
+                select.toggle();
+            });
+
+            li.click(function(eve){
+                var index = $(this).index();
+                console.log(index);
+                var text = $(this).text();  //获取当前点击li文本
+                mrSelector.text(text);      //赋值默认选项文本
+                console.log($("#selector .hd-selector option"));
+                selector.find(".hd-selector option").eq(index)
+                    .attr("selected","selected").siblings().removeAttr("selected");
+                $(this).parent().hide();
+
+            });
+
+            $("body").click(function(){
+                select.hide();
+            });
+
+        }());
+
+
+    </script-->
+	
+	
+ <script type="text/html" id="selectTag">
+   <!--div id="div_select" class=div_select onclick="Click(); onclick="document.getElementById('selectRX{{num}}').onmousedown();"-->
+   <div class="div_select">
+	
+	  <label for="RX{{num}}">RX{{num}}:</label>
+	  <input class="input_name" type="text" id="rxInput{{num}}" placeholder="rename" value="TV{{num}}" readonly="true" disabled="disabled">
+	 <div id="selector">
+	  <select size="1" class="selectRx" id='selectRX{{num}}' name="RX{{num}}"-->
+	  <!--select size="1" class="hd-selector" id='selectRX{{num}}' name="RX{{num}}"-->
+		<option class="option01" value="1">TX01:</option>
+		<option class="option02" value="2">TX02:</option>
+		<option class="option03" value="3">TX03:</option>
+		<option class="option04" value="4">TX04:</option>
+		<option class="option05" value="5">TX05:</option>
+		<option class="option06" value="6">TX06:</option>
+		<option class="option07" value="7">TX07:</option>
+		<option class="option08" value="8">TX08:</option>
+		<option class="option09" value="9">TX09:</option>
+		<option class="option10" value="10">TX10:</option>
+		<option class="option11" value="11">TX11:</option>
+		<option class="option12" value="12">TX12:</option>
+		<option class="option13" value="13">TX13:</option>
+		<option class="option14" value="14">TX14:</option>
+		<option class="option15" value="15">TX15:</option>
+		<option class="option16" value="16">TX16:</option>
+		<option class="option17" value="17">TX17:</option>
+		<option class="option18" value="18">TX18:</option>
+		<option class="option19" value="19">TX19:</option>
+		<option class="option20" value="20">TX20:</option>
+		<option class="option21" value="21">TX21:</option>
+		<option class="option22" value="22">TX22:</option>
+		<option class="option23" value="23">TX23:</option>
+		<option class="option24" value="24">TX24:</option>
+      </select>
+	 </div>
+   </div>
+   
+   
+</script>
+
+<script>
+/*
+function Click()
+{
+	alert("click");
+	//var a = document.getElementById("selectRX001").click();
+	if(document.all) 
+	{
+		//alert(document.all);
+		document.getElementById("selectRX001").click();
+		//alert(a);
+	}
+	else // 其它浏览器
+	{
+		//alert(document.all);
+		var e = document.createEvent("MouseEvents");
+		e.initEvent("click", true, true);
+		document.getElementById("selectRX001").dispatchEvent(e);
+	}
+	
+}
+*/
+
+/*
+function freshRxName(var nameNum, var rxName)
+{
+	var IdName = rxId[nameNum];
+	
+	document.getElementById(IdName) = rxName;
+}
+
+function sonMethod() {
+
+alert("子窗口方法!");
+
+}
+*/
+
+window.onload=function()
+{
+	rxButtonInitSet();
+	
+}
+
+
+</script>
+<!--style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .content {
+            margin: 50px auto 0;
+            width: auto;
+            min-height: 500px;
+        }
+
+        .form-group {
+            width: 100%;
+            float: left;
+            margin: 5px 0;
+        }
+
+        label {
+            margin-bottom: 10px;
+            float: left;
+        }
+
+        .field-input, select {
+            width: calc(100% - 20px);
+            //float: left;
+            padding: 10px;
+            font-family: inherit;
+        }
+</style-->
+ 
+</head>
+<!--body class="body-button" onload="SetRxRename();-->
+<body class="body-button" onload="rxButtonInitSet();">
+	<div class="container">
+        <div class="content">
+            <form action="#" method="post" autocomplete="on">
+			<!--form-->
+				<div class="addSelectRx">
+					<script>
+						//SetRXMulticast();
+						//SetRxRename();
+						//SetTxRename();
+						LoopButton();
+						setTimeout(function(){
+							SetRXMulticast();
+							SetRxRename();
+							SetTxRename();
+							}, 500);
+						
+					</script>
+				</div>
+			</form>
+		</div>
+   </div>
+</div>
+
+
+<!--script>
+
+    // Preparar o select
+    //pickout.to('.pickout');
+    pickout.to({
+        el: '.selectRx',
+        theme: 'clean',
+        search: false
+    });
+
+    // automaticamente
+    pickout.updated('.selectRx');
+</script-->
+</body>
+</html>

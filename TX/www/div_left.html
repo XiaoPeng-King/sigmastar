@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+
+body {
+	width: 99%; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	background-color:#262626; 
+	border-style: none;
+	/*padding-right:2px;*/
+ 	border-right: 1% solid  white;
+	/*border-bottom: 1px solid  white;*/
+	/*border-bottom: 1px solid  white;*/
+	/*border-right-color: blue;*/
+	/*border-color: blue;*/
+	/*background-image:url(./css/logo.png);*/
+	/*opacity:0.4;*/
+	/*background-repeat:no-repeat;*/
+	/*background-attachment:fixed;*//*背景图像固定*/
+	background-size: 90%;
+	height: auto;	
+	background-position:0px 420px;
+}
+
+img{
+	position: absolute;
+	left:10px;
+	/*top:415px;*/
+	bottom:65px;
+	z-index:-10;
+	opacity: 0.4;
+	width:90%;
+	height:auto;
+}
+
+div{
+	text-align:center;
+}
+
+.div{
+	overflow:auto;
+}
+
+.div>.div1{
+	
+	width:30%;
+	height:100px;
+	line-height:100px;
+	display:inline-block;
+}
+
+.div>.div2{
+	
+	width:30%;
+	height:100px;
+	line-height:100px;
+	display:inline-block;
+}
+
+.div>.div3{
+	
+	width:30%;
+	height:100px;
+	line-height:100px;
+	display:inline-block;
+}
+
+.div>.divA{
+	
+	width:30%;
+	height:30px;
+	line-height:10px;
+	display:inline-block;
+	color:white;
+}
+
+.div>.divB{
+	
+	width:30%;
+	height:30px;
+	line-height:10px;
+	display:inline-block;
+	color:white;
+}
+
+.div>.divC{
+	
+	width:30%;
+	height:30px;
+	line-height:10px;
+	display:inline-block;
+	color:white;
+}
+
+.RXBotton{
+	height: 100px;
+	width: 110px;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	border-radius:10px;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.RxNameInput{
+	height: 20px;
+	width:110px;
+	text-align: center;
+	color:white;
+	background-color: transparent; /*#262626;*/
+	border-color:#262626;
+	outline: none;
+	border: 0;
+	
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+#button129{
+	background-color: transparent; /*#262626;*/
+	outline: none;
+	border: 0;
+}
+
+.page {
+	margin:8px 0px 0px 0px;
+	/*转换为内联块 才可以增加a标签的大小*/
+	display: inline-block;
+	background: #4d4d4d;
+	border-color: #4d4d4d;
+	/*14 12*/
+	padding: 10px 18px;
+	font-size: 15px;
+	/*把行高设置和文字一样 方便计算a标签的高度*/
+	line-height: 15px;
+	color:white;
+	text-decoration: none;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+
+}
+
+</style>
+
+<script type="text/html" id="selectTag">
+  <div class="div_button">
+	 <div class="div">
+	<div class="div1">
+		<input id="button{{numA}}" type='button' class="RXBotton" onclick="onclickButtonSelectTx('{{numA}}')"/>
+	</div>
+	<div class="div2">
+		<input id="button{{numB}}" type='button' class="RXBotton" onclick="onclickButtonSelectTx('{{numB}}')"/>
+	</div>
+	<div class="div3">
+		<input id="button{{numC}}" type='button' class="RXBotton" onclick="onclickButtonSelectTx('{{numC}}')"/>
+	</div>
+	<div class="divA">
+		<input id="rxName{{numA}}"  class="RxNameInput" type="text" readonly="true" disabled="disabled" value="TV-{{numA}}"/>
+	</div>
+	<div class="divB">
+		<input id="rxName{{numB}}"  class="RxNameInput" type="text" readonly="true" disabled="disabled" value="TV-{{numB}}"/>
+	</div>
+	<div class="divC">
+		<input id="rxName{{numC}}"  class="RxNameInput" type="text" readonly="true" disabled="disabled" value="TV-{{numC}}"/>
+	</div>
+	</div>
+  </div>
+</script>
+
+<script>
+var numA = ['001','004','007','010','013','016','019','022','025','028','031','034','037','040','043','046','049','052','055','058','061','064','067','070','073','076','079','082','085','088','091','094','097','100','103','106','109','112','115','118','121','124','127'];
+var numB = ['002','005','008','011','014','017','020','023','026','029','032','035','038','041','044','047','050','053','056','059','062','065','068','071','074','077','080','083','086','089','092','095','098','101','104','107','110','113','116','119','122','125','128'];
+var numC = ['003','006','009','012','015','018','021','024','027','030','033','036','039','042','045','048','051','054','057','060','063','066','069','072','075','078','081','084','087','090','093','096','099','102','105','108','111','114','117','120','123','126','129'];
+
+var tmp = 1;
+//var stringValue;
+var selectButtonValue;
+
+function LoopButton()
+{
+	//for (var i=0; i<42; i++)
+	for (var i=0; i<5; i++)
+	{
+		var tiganStr = $("#selectTag").html();
+		tiganStr = delHtmlTags(tiganStr, "{{numA}}", numA[i]);
+		tiganStr = delHtmlTags(tiganStr, "{{numB}}", numB[i]);
+		tiganStr = delHtmlTags(tiganStr, "{{numC}}", numC[i]);
+		$(".addSelectRx").append(tiganStr);
+	}
+}
+
+function delHtmlTags(str, reallyDo, replaceWith)
+{
+	var e = new RegExp(reallyDo, "g");
+	words = str.replace(e, replaceWith);
+	
+	return words;
+}
+
+var tmpNumber = 1;
+
+function onclickButtonSelectTx(number)
+{
+	var ButtonId;
+	var i;
+	var TxTmp;
+	//console.log(number);
+	ButtonId = "button"+number;
+	selectButtonValue = number;
+	//stringValue = '1000';
+	//alert(selectButtonValue);
+	//console.log(tmpNumber);
+	if (0 == window.parent.tmp5)
+	{
+		alert("please close info display, then select source!");
+		return ;
+	}
+
+	if (number==tmpNumber) //check button same
+	{
+		if (tmp == 1) //check button state 
+		{
+			//alert(ButtonId);
+			//display selection panel of the source and change color of the button
+			window.parent.document.getElementById("div_popupTxSelectButton").style.visibility="visible";
+			//document.getElementById(ButtonId).style.backgroundColor="green";
+		
+			window.parent.document.getElementById("div_popupRename").style.visibility="hidden";
+			window.parent.document.getElementById("RENAME").style.backgroundColor="#4d4d4d";
+
+			window.parent.document.getElementById("TxChangeName").style.backgroundColor="#4d4d4d";
+			window.parent.document.getElementById("ModeChangeName").style.backgroundColor="#4d4d4d";
+			window.parent.document.getElementById("RxChangeName").style.backgroundColor="#4d4d4d";
+
+			window.parent.document.getElementById("div_popupChangeTxName").style.visibility="hidden";
+			window.parent.document.getElementById("div_popupChangeModeName").style.visibility="hidden";
+			window.parent.document.getElementById("div_popupChangeRxName").style.visibility="hidden";
+
+			window.parent.tmp1 = 1;
+			window.parent.tmp2 = 1;
+			window.parent.tmp3 = 1;
+			window.parent.tmp4 = 1;
+			//console.log(number);
+			for (i=0; i<15; i++)
+			{
+				ButtonId = "button"+num[i];
+
+				if (num[i] == number)
+				{
+					document.getElementById(ButtonId).style.backgroundColor="green";
+				}
+				else
+				{
+					document.getElementById(ButtonId).style.backgroundColor="#4d4d4d";
+				}
+			}
+
+			//
+			/*
+			for (i=0; i<128; i++)
+			{
+				ButtonId = "button"+num[i];
+				if (num[i] == number)
+				{
+					document.getElementById(ButtonId).removeAttribute("disabled");
+				}
+				else
+				{
+					document.getElementById(ButtonId).setAttribute("disabled", true);
+				}
+			}
+			*/
+			/*
+			ButtonId = "button"+number;
+			for (i=0; i<24; i++)
+			{
+				TxTmp = "TX"+num1[i];
+				window.parent.document.getElementById("myIframe_selectTxButton").contentWindow.document.getElementById(TxTmp).style.backgroundColor = "#4d4d4d";
+			}
+			*/
+			//document.getElementById(ButtonId).setAttribute("disabled", false);
+			//document.getElementById(ButtonId).removeAttribute("disabled");
+			tmp=0;
+		}
+		else
+		{
+			/*
+			if (0 == window.parent.tmp5)
+			{
+				alert("please close info display, then select source!");
+				return ;
+			}
+			*/
+			//ButtonId = "button"+number;
+			window.parent.document.getElementById("div_popupTxSelectButton").style.visibility="hidden";
+			document.getElementById(ButtonId).style.backgroundColor="#4d4d4d";
+			for (i=0; i<15; i++)
+			{
+				ButtonId = "button"+num[i];
+				document.getElementById(ButtonId).style.backgroundColor="#4d4d4d";
+			}
+			//alert(ButtonId);
+			/*
+			for (i=0; i<128; i++)
+			{
+				ButtonId = "button"+num[i];
+				document.getElementById(ButtonId).removeAttribute("disabled");
+			}
+			*/
+			tmp=1;
+		}
+		
+		selectButtonValue = number;
+	}
+	else
+	{
+		window.parent.document.getElementById("div_popupRename").style.visibility="hidden";
+		window.parent.document.getElementById("RENAME").style.backgroundColor="#4d4d4d";
+
+		window.parent.document.getElementById("TxChangeName").style.backgroundColor="#4d4d4d";
+		window.parent.document.getElementById("ModeChangeName").style.backgroundColor="#4d4d4d";
+		window.parent.document.getElementById("RxChangeName").style.backgroundColor="#4d4d4d";
+
+		window.parent.document.getElementById("div_popupChangeTxName").style.visibility="hidden";
+		window.parent.document.getElementById("div_popupChangeModeName").style.visibility="hidden";
+		window.parent.document.getElementById("div_popupChangeRxName").style.visibility="hidden";
+
+		window.parent.tmp1 = 1;
+		window.parent.tmp2 = 1;
+		window.parent.tmp3 = 1;
+		window.parent.tmp4 = 1;
+		
+		tmpNumber = number;
+		tmp = 0;
+		for (i=0; i<15; i++)
+		{
+			ButtonId = "button"+num[i];
+			
+			if (num[i] == number)
+			{
+				document.getElementById(ButtonId).style.backgroundColor="green";
+			}
+			else
+			{
+				document.getElementById(ButtonId).style.backgroundColor="#4d4d4d";;
+			}
+		}
+		//display selection panel of the source and change color of the button
+		window.parent.document.getElementById("div_popupTxSelectButton").style.visibility="visible";
+		//document.getElementById(ButtonId).style.backgroundColor="green";
+		
+	}
+	
+	//console.log(tmp);
+	//console.log(number);
+	
+	//$(window.parent.$("#div_popupTxSelectButton"))[0].style.visibility="visible";
+	//alert('Setting Successful!');
+	//stringValue = "1000";
+}
+
+
+</script>
+ 
+</head>
+<!--body class="body-button" onload="SetRxRename();-->
+<body class="body-button" onload="SelectButtonNameInit(1);">
+	<h2 style="color:white; text-align:center;"> VIDEO SWITCH DASHBOARD </h2>
+	<div class="container">
+        <div class="content">
+            <!--form action="#" method="post" autocomplete="on"-->
+			<div class="addSelectRx">
+				<script>				
+					LoopButton();
+				</script>
+				<!--div class="div_button">
+						<div class="div">
+							<div class="div1">
+								<input id="button127" type='button' class="RXBotton" onclick="onclickButtonSelectTx('127')"/>
+							</div>
+							<div class="div2">
+								<input id="button128" type='button' class="RXBotton" onclick="onclickButtonSelectTx('128')"/>
+							</div>
+							<div class="div3">
+								<input id="button129" type='button' class="RXBotton" value="  " disabled="disabled"/>
+							</div>
+							
+							<div class="divA">
+								<input id="rxName127"  class="RxNameInput" type="text" readonly="true" disabled="disabled" value="TV-127"/>
+							</div>
+							<div class="divB">
+								<input id="rxName128"  class="RxNameInput" type="text" readonly="true" disabled="disabled" value="TV-128"/>
+							</div>
+							<div class="divC">
+								<input id="rxName129"  class="RxNameInput" type="text" readonly="true" disabled="disabled" value=" "/>
+							</div>	
+						</div>
+					</div-->
+					<!--img src="./css/logo.png"-->
+					<!--img src="./css/Wyrestorm_Logo.png"-->
+					<div>
+						<input id="leftPage-1" style="background-color: green" class="page" type='button' onclick="onclickButtonUpdateContent(1)" value="1">
+						<input id="leftPage-2" class="page" type='button' onclick="onclickButtonUpdateContent(2)" value="2">
+						<input id="leftPage-3" class="page" type='button' onclick="onclickButtonUpdateContent(3)" value="3">
+						<input id="leftPage-4" class="page" type='button' onclick="onclickButtonUpdateContent(4)" value="4">
+						<input id="leftPage-5" class="page" type='button' onclick="onclickButtonUpdateContent(5)" value="5">
+						<input id="leftPage-6" class="page" type='button' onclick="onclickButtonUpdateContent(6)" value="6">
+						<input id="leftPage-7" class="page" type='button' onclick="onclickButtonUpdateContent(7)" value="7">
+						<input id="leftPage-8" class="page" type='button' onclick="onclickButtonUpdateContent(8)" value="8">
+						<input id="leftPage-9" class="page" type='button' onclick="onclickButtonUpdateContent(9)" value="9">
+						
+						<!--a style="background-color: rgb(22, 201, 22);" href="./div_left_1.html">1</a>
+						<a href="./div_left_2.html">2</a>
+						<a href="./div_left_3.html">3</a>
+						<a href="./div_left_4.html">4</a>
+						<a href="./div_left_5.html">5</a>
+						<a href="./div_left_6.html">6</a>
+						<a href="./div_left_7.html">7</a>
+						<a href="./div_left_8.html">8</a>
+						<a href="./div_left_9.html">9</a-->
+					</div>
+			</div>
+			<!--/form-->
+		</div>
+   </div>
+</div>
+
+
+</body>

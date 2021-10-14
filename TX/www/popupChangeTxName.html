@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+
+html{
+	margin:0;
+	padding:0;
+	min-width: 330px; /*页面最小宽度*/
+	max-width: 480px; /*页面最大宽度*/
+}
+
+body{	
+	width: auto; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	min-width: 330px; /*页面最小宽度*/
+	max-width: 480px; /*页面最大宽度*/
+	background-color:#262626;
+	padding:0;
+}
+
+div{
+	text-align:center;
+}
+
+.div{
+	/*background-color:#F00;*/
+	overflow:auto;
+	border-color:white; /*边框颜色*/
+	border: 1px;
+	border: #808080 solid thin; /*设置边框样式*/
+	background-color:#4d4d4d;
+}
+
+.div_mode-text{
+	height:35px;
+	
+}
+
+.TxSelectButton{
+	height: 100px;
+	width: 100%;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.inputChangeTxName{
+	height: 68px;
+	width: 37%;
+	background-color:#4d4d4d;
+	color: white;
+	appearance:none;
+	border-color:#4d4d4d; /*边框颜色*/
+	outline: none;
+	border: 0;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.ApplyButton{
+	height: 68px;
+	width: 15%;
+	visibility:hidden;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	font-weight:700; /*字体加粗100-900*/
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.CancelButton{
+	height: 68px;
+	width: 15%;
+	visibility:hidden;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	font-weight:700; /*字体加粗100-900*/
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+.labelMode{
+	color: white;
+	font-size:0.8rem;	
+
+}
+.buttonBottom{
+	height:30px;
+	width:80px;
+	background-color:#4d4d4d;
+	color: white;
+	font-size: 1rem;
+	border-color:#4d4d4d; /*边框颜色*/
+	border-radius:1px;
+	
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+input {
+  -webkit-appearance: none;
+	outline:none;
+}
+
+*{
+  -webkit-tap-highlight-color: transparent;   /*设置为透明*/
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+ }
+
+</style>
+
+<script type="text/html" id="TxRenameTag">
+  <div class="div_button">
+	 <div id="divBlock{{num}}" class="div">
+		<label id="label{{num}}" class="labelMode" for="inputRxName{{num}}">SOURCE-{{num}}:</label>
+		<input id="inputTxName{{num}}" class="inputChangeTxName" size="12" maxlength="12" onfocus="OnfocusTx('{{num}}');" onblur="OnblurTx('{{num}}');" value="">
+		<input id="ApplyButton{{num}}" class="ApplyButton" type="button" onclick="OnclickApplyButton('{{num}}');" value="OK"/>
+		<input id="CancelButton{{num}}" class="CancelButton" type="button" onclick="OnclickCancelButton('{{num}}')" value="CL">
+	<div>
+  </div>
+</script>
+
+<script >
+var currentPage = 1;
+function LoopButton()
+{
+	for (var i=0; i<10; i++)
+	{
+		var tiganStr = $("#TxRenameTag").html();
+		tiganStr = delHtmlTags(tiganStr, "{{num}}", num1[i]);
+		$(".TxName").append(tiganStr);
+	}
+}
+
+function delHtmlTags(str, reallyDo, replaceWith)
+{
+	var e = new RegExp(reallyDo, "g");
+	words = str.replace(e, replaceWith);
+
+	return words;
+}
+
+function OnblurTx(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputTxName"+number;
+	var DivId = "divBlock"+number;
+	
+	document.getElementById(InputId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(ApplyId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(ApplyId).style.borderColor = "#4d4d4d"
+	document.getElementById(CancelId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(CancelId).style.borderColor = "#4d4d4d"
+	document.getElementById(DivId).style.backgroundColor = "#4d4d4d"
+}
+
+function OnfocusTx(number)
+{
+	//alert(number);
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputTxName"+number;
+	var DivId = "divBlock"+number;
+	
+	var i;
+	
+	for (i=0; i<10; i++)
+	{
+		ApplyId = "ApplyButton"+num1[i];
+		CancelId = "CancelButton"+num1[i];
+		document.getElementById(ApplyId).style.visibility = "hidden";
+		document.getElementById(CancelId).style.visibility = "hidden";
+	}
+	ApplyId = "ApplyButton"+number;
+	CancelId = "CancelButton"+number;
+	InputId = "inputTxName"+number;
+	
+	document.getElementById(ApplyId).style.visibility = "visible";
+	document.getElementById(ApplyId).style.backgroundColor = "green";
+	document.getElementById(ApplyId).style.borderColor = "green"
+	
+	document.getElementById(CancelId).style.visibility = "visible";
+	document.getElementById(CancelId).style.backgroundColor = "green";
+	document.getElementById(CancelId).style.borderColor = "green"
+	
+	document.getElementById(InputId).style.backgroundColor = "green";
+	document.getElementById(InputId).style.borderColor = "green";
+	document.getElementById(DivId).style.backgroundColor = "green"
+	//document.getElementById(InputId).style.backgroundColor
+	
+	//border-color:#4d4d4d; /*边框颜色*/
+	
+	//alert(num1);
+}
+
+
+function OnclickApplyButton(number)
+{
+	var ordNum = Number(number);
+	ordNum = ((currentPage - 1) * 10) + ordNum;
+	var strNumber = num1[ordNum-1];
+
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputTxName"+number;
+	var TxId = "TX"+strNumber;
+	var TxSelectButtonId;
+	
+	//var rxMulticast = 
+	var page = parent.currentLeftPageNum;
+	var name;
+	var ret;
+	var inputValue = document.getElementById(InputId).value;
+
+	if (''==inputValue)
+	{
+		name = "SOURCE-"+strNumber;
+	}
+	else
+	{
+		name = num1[ordNum-1]+'-'+inputValue;
+	}
+	
+	ret = changeTxName(strNumber, inputValue);
+	if (1==ret)
+	{
+		document.getElementById(ApplyId).style.visibility = "hidden";
+		document.getElementById(CancelId).style.visibility = "hidden";
+
+		window.parent.document.getElementById("myIframe_selectTxButton").contentWindow.document.getElementById(TxId).value = name;
+		window.parent.txName[ordNum-1] = inputValue;
+		
+		if ((Math.ceil(ordNum/15)) == page)
+		{
+			for (var i=0; i<15; i++)
+			{
+				TxSelectButtonId = "button"+num[i];
+				
+				if (window.parent.rxMulticast[i] == ordNum)
+				{
+					if (''==inputValue)
+					{
+						window.parent.document.getElementById("myIframe_left").contentWindow.document.getElementById(TxSelectButtonId).value = "SOURCE-"+num1[window.parent.rxMulticast[i]-1];
+					}
+					else
+					{
+						window.parent.document.getElementById("myIframe_left").contentWindow.document.getElementById(TxSelectButtonId).value = name;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		document.getElementById(ApplyId).style.backgroundColor = "red";
+		document.getElementById(ApplyId).style.borderColor = "red";
+	}
+	//alert(number);
+}
+
+function OnclickCancelButton(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputTxName"+number;
+		
+	document.getElementById(ApplyId).style.visibility = "hidden";
+	document.getElementById(CancelId).style.visibility = "hidden";
+	document.getElementById(InputId).value = '';
+
+	//alert(number);
+}
+
+function changTxNameInit()
+{
+	var inputTxNameId;
+
+	for (var i=0; i<10; i++)
+	{
+		inputTxNameId = "inputTxName"+num1[i];
+		//console.log(inputTxNameId);
+		document.getElementById(inputTxNameId).value = window.parent.txName[i];
+	}
+
+}
+
+function txUpPage()
+{
+	document.getElementById("buttonUp").style.backgroundColor = "green";
+	var firstNum = 0;
+	
+	if (currentPage >= 1 && currentPage <= 3)
+	{
+		//console.log(currentPage);
+		if (currentPage > 1)
+		{
+			currentPage--;
+		}
+		
+		switch (currentPage)
+		{
+		case 1:
+			firstNum = 0;
+			break;
+		case 2:
+			firstNum = 10;
+			break;
+		case 3:
+			firstNum = 20;	
+			break;
+		}
+		if (3 == currentPage)
+		{
+			document.getElementById("divBlock05").style.visibility = "hidden";
+			document.getElementById("divBlock06").style.visibility = "hidden";
+			document.getElementById("divBlock07").style.visibility = "hidden";
+			document.getElementById("divBlock08").style.visibility = "hidden";
+			document.getElementById("divBlock09").style.visibility = "hidden";
+			document.getElementById("divBlock10").style.visibility = "hidden";
+			document.getElementById("ApplyButton05").style.visibility = "hidden";
+			document.getElementById("ApplyButton06").style.visibility = "hidden";
+			document.getElementById("ApplyButton07").style.visibility = "hidden";
+			document.getElementById("ApplyButton08").style.visibility = "hidden";
+			document.getElementById("ApplyButton09").style.visibility = "hidden";
+			document.getElementById("ApplyButton10").style.visibility = "hidden";
+			document.getElementById("CancelButton05").style.visibility = "hidden";
+			document.getElementById("CancelButton06").style.visibility = "hidden";
+			document.getElementById("CancelButton07").style.visibility = "hidden";
+			document.getElementById("CancelButton08").style.visibility = "hidden";
+			document.getElementById("CancelButton09").style.visibility = "hidden";
+			document.getElementById("CancelButton10").style.visibility = "hidden";
+		}
+		else
+		{
+			document.getElementById("divBlock05").style.visibility = "visible";
+			document.getElementById("divBlock06").style.visibility = "visible";
+			document.getElementById("divBlock07").style.visibility = "visible";
+			document.getElementById("divBlock08").style.visibility = "visible";
+			document.getElementById("divBlock09").style.visibility = "visible";
+			document.getElementById("divBlock10").style.visibility = "visible";
+		}
+		for (var i=0; i<10; i++)
+		{
+			var labelId = "label"+num1[i];
+			var labelName = "SOURCE-"+num1[firstNum+i]+":";
+			var inputTxNameId = "inputTxName"+num1[i];
+			//console.log(inputRxNameId);
+			document.getElementById(labelId).innerHTML = labelName;
+			document.getElementById(inputTxNameId).value = window.parent.txName[firstNum+i];
+		}
+	}
+	
+	document.getElementById("buttonUp").style.backgroundColor = "#4d4d4d";
+	//alert("UP");
+}
+
+function txNextPage()
+{
+	document.getElementById("buttonNext").style.backgroundColor = "green";
+	var firstNum = 0;
+	if (currentPage >= 1 && currentPage <= 3)
+	{
+		//console.log(currentPage);
+		if (currentPage < 3)
+		{
+			currentPage++;
+		}
+		switch (currentPage)
+		{
+		case 1:
+			firstNum = 0;
+			break;
+		case 2:
+			firstNum = 10;
+			break;
+		case 3:
+			firstNum = 20;	
+			break;
+		}
+
+		if (3 == currentPage)
+		{
+			document.getElementById("divBlock05").style.visibility = "hidden";
+			document.getElementById("divBlock06").style.visibility = "hidden";
+			document.getElementById("divBlock07").style.visibility = "hidden";
+			document.getElementById("divBlock08").style.visibility = "hidden";
+			document.getElementById("divBlock09").style.visibility = "hidden";
+			document.getElementById("divBlock10").style.visibility = "hidden";
+			document.getElementById("ApplyButton05").style.visibility = "hidden";
+			document.getElementById("ApplyButton06").style.visibility = "hidden";
+			document.getElementById("ApplyButton07").style.visibility = "hidden";
+			document.getElementById("ApplyButton08").style.visibility = "hidden";
+			document.getElementById("ApplyButton09").style.visibility = "hidden";
+			document.getElementById("ApplyButton10").style.visibility = "hidden";
+			document.getElementById("CancelButton05").style.visibility = "hidden";
+			document.getElementById("CancelButton06").style.visibility = "hidden";
+			document.getElementById("CancelButton07").style.visibility = "hidden";
+			document.getElementById("CancelButton08").style.visibility = "hidden";
+			document.getElementById("CancelButton09").style.visibility = "hidden";
+			document.getElementById("CancelButton10").style.visibility = "hidden";
+		}
+		else
+		{
+			document.getElementById("divBlock05").style.visibility = "visible";
+			document.getElementById("divBlock06").style.visibility = "visible";
+			document.getElementById("divBlock07").style.visibility = "visible";
+			document.getElementById("divBlock08").style.visibility = "visible";
+			document.getElementById("divBlock09").style.visibility = "visible";
+			document.getElementById("divBlock10").style.visibility = "visible";
+		}
+		
+		for (var i=0; i<10; i++)
+		{
+			var labelId = "label"+num1[i];
+			if (firstNum+i < 24)
+			{
+				var labelName = "SOURCE-"+num1[firstNum+i]+":";
+			}
+			var inputTxNameId = "inputTxName"+num1[i];
+			//console.log(inputRxNameId);
+			document.getElementById(labelId).innerHTML = labelName;
+			document.getElementById(inputTxNameId).value = window.parent.txName[firstNum+i];
+		}
+	}
+	document.getElementById("buttonNext").style.backgroundColor = "#4d4d4d";
+	//alert("NEXT");
+}
+
+</script>
+</script>
+ 
+</head>
+<body class="" onload="changTxNameInit()">
+	<div class="TxName">
+		<script>
+			LoopButton();
+		</script>
+		<input class="buttonBottom" id="buttonUp" type="button" value="PREV" onclick="txUpPage()">
+		<input class="buttonBottom" id="buttonNext" type="button" value="NEXT" onclick="txNextPage()">
+	</div>
+</body>
+</html>

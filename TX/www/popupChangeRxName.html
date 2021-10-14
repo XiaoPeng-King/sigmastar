@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+
+html{
+	margin:0;
+	padding:0;
+	min-width: 330px; /*页面最小宽度*/
+	max-width: 480px; /*页面最大宽度*/
+}
+
+body{	
+	width: auto; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	min-width: 330px; /*页面最小宽度*/
+	max-width: 480px; /*页面最大宽度*/
+	background-color:#262626;
+	padding:0;
+}
+
+div{
+	text-align:center;
+}
+
+.div{
+	/*background-color:#F00;*/
+	overflow:auto;
+	border-color:white; /*边框颜色*/
+	border: 1px;
+	border: #808080 solid thin; /*设置边框样式*/
+	background-color:#4d4d4d;
+}
+
+.div_mode-text{
+	height:35px;
+	
+}
+
+.TxSelectButton{
+	height: 68px;
+	width: 100%;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.inputChangeRxName{
+	height: 68px;
+	width: 45%;
+	background-color:#4d4d4d;
+	color: white;
+	appearance:none;
+	border-color:#4d4d4d; /*边框颜色*/
+	outline: none;
+	border: 0;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+	-webkit-tap-highlight-color:  transparent;
+}
+
+.ApplyButton{
+	height: 68px;
+	width: 15%;
+	visibility:hidden;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	font-weight:700; /*字体加粗100-900*/
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.CancelButton{
+	height: 68px;
+	width: 15%;
+	visibility:hidden;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	font-weight:700; /*字体加粗100-900*/
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.labelMode{
+	color: white;
+	font-size:0.8rem;
+}
+
+.buttonBottom{
+	height:30px;
+	width:80px;
+	background-color:#4d4d4d;
+	color: white;
+	font-size: 1rem;
+	border-color:#4d4d4d; /*边框颜色*/
+	border-radius:1px;
+	
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+input {
+  -webkit-appearance: none;
+	outline:none;
+}
+
+*{
+  -webkit-tap-highlight-color: transparent;   /*设置为透明*/
+	-webkit-backface-visibility:  hidden;
+ }
+
+</style>
+<script type="text/html" id="RxRenameTag">
+  <div class="div_button">
+	 <div id="divBlock{{num}}" class="div">
+		<label id="label{{num}}" class="labelMode" for="inputRxName{{num}}">TV-{{num}}:</label>
+		<input id="inputRxName{{num}}" class="inputChangeRxName" size="12" maxlength="12" onfocus="OnfocusRx('{{num}}');" onblur="OnblurRx('{{num}}');" value="">
+		<input id="ApplyButton{{num}}" class="ApplyButton" type="button" onclick="OnclickApplyButton('{{num}}');" value="OK"/>
+		<input id="CancelButton{{num}}" class="CancelButton" type="button" onclick="OnclickCancelButton('{{num}}')" value="CL">
+	 </div>
+  </div>
+</script>
+
+
+<script>
+var currentPage = 1;
+
+function LoopButton()
+{
+	for (var i=0; i<10; i++)
+	{
+		var tiganStr = $("#RxRenameTag").html();
+		tiganStr = delHtmlTags(tiganStr, "{{num}}", num[i]);
+		$(".RxName").append(tiganStr);
+	}
+}
+
+function delHtmlTags(str, reallyDo, replaceWith)
+{
+	var e = new RegExp(reallyDo, "g");
+	words = str.replace(e, replaceWith);
+
+	return words;
+}
+
+function OnblurRx(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputRxName"+number;
+	var DivId = "divBlock"+number;
+	
+	document.getElementById(InputId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(ApplyId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(ApplyId).style.borderColor = "#4d4d4d"
+	document.getElementById(CancelId).style.backgroundColor = "#4d4d4d";
+	document.getElementById(CancelId).style.borderColor = "#4d4d4d"
+	document.getElementById(DivId).style.backgroundColor = "#4d4d4d"
+}
+
+function OnfocusRx(number)
+{
+	//alert(number);
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputRxName"+number;
+	var DivId = "divBlock"+number;
+	
+	var i;
+	
+	for (i=0; i<10; i++)
+	{
+		ApplyId = "ApplyButton"+num[i];
+		CancelId = "CancelButton"+num[i];
+		document.getElementById(ApplyId).style.visibility = "hidden";
+		document.getElementById(CancelId).style.visibility = "hidden";
+	}
+	ApplyId = "ApplyButton"+number;
+	CancelId = "CancelButton"+number;
+	InputId = "inputRxName"+number;
+	
+	document.getElementById(ApplyId).style.visibility = "visible";
+	document.getElementById(ApplyId).style.backgroundColor = "green";
+	document.getElementById(ApplyId).style.borderColor = "green"
+	
+	document.getElementById(CancelId).style.visibility = "visible";
+	document.getElementById(CancelId).style.backgroundColor = "green";
+	document.getElementById(CancelId).style.borderColor = "green"
+	
+	document.getElementById(InputId).style.backgroundColor = "green";
+	document.getElementById(InputId).style.borderColor = "green";
+	document.getElementById(DivId).style.backgroundColor = "green"
+	//document.getElementById(InputId).style.backgroundColor
+	
+	//border-color:#4d4d4d; /*边框颜色*/
+	
+	//alert(num);
+}
+
+function OnclickApplyButton(number)
+{
+	var ordNum = Number(number);
+	ordNum = ((currentPage - 1) * 10) + ordNum;
+	//console.log(ordNum);
+	var strNumber = num[ordNum-1];
+	//console.log(strNumber);
+
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputRxName"+number;
+	var RxId = "rxName"+strNumber;
+	var parent = window.parent;
+	var page = parent.currentLeftPageNum;
+	var ret;
+	
+	var inputValue = document.getElementById(InputId).value;
+	var name = inputValue;
+	if (''==inputValue)
+	{
+		//inputValue = "TV"+number;
+		name = "TV-" + strNumber;
+	}
+	else
+	{
+		//inputValue = number+'-'+inputValue;
+		name = strNumber +'-'+inputValue;
+	}
+
+	//console.log(Math.ceil(num/15));
+	//console.log(page);
+	ret = changeRxName(strNumber, inputValue);
+	
+	if (1==ret)
+	{
+		window.parent.rxName[ordNum-1] = inputValue;
+		document.getElementById(ApplyId).style.visibility = "hidden";
+		document.getElementById(CancelId).style.visibility = "hidden";
+		
+		if ((Math.ceil(ordNum/15))==page)
+		{
+			window.parent.document.getElementById("myIframe_left").contentWindow.document.getElementById(RxId).value = name;
+		}
+	}
+	else
+	{
+		document.getElementById(ApplyId).style.backgroundColor = "red";
+		document.getElementById(ApplyId).style.borderColor = "red";
+	}
+}
+
+function OnclickCancelButton(number)
+{
+	var ApplyId = "ApplyButton"+number;
+	var CancelId = "CancelButton"+number;
+	var InputId = "inputRxName"+number;
+	
+	document.getElementById(ApplyId).style.visibility = "hidden";
+	document.getElementById(CancelId).style.visibility = "hidden";
+	document.getElementById(InputId).value = '';
+
+	//alert(number);
+}
+
+function changRxNameInit()
+{
+	var inputRxNameId;
+
+	for (var i=0; i<10; i++)
+	{
+		inputRxNameId = "inputRxName"+num[i];
+		//console.log(inputRxNameId);
+		document.getElementById(inputRxNameId).value = window.parent.rxName[i];
+	}
+}
+
+
+
+function rxUpPage()
+{
+	document.getElementById("buttonUp").style.backgroundColor = "green";
+	var firstNum = 0;
+	
+	if (currentPage >= 1 && currentPage <= 13)
+	{
+		//console.log(currentPage);
+		if (currentPage > 1)
+		{
+			currentPage--;
+		}
+		
+		switch (currentPage)
+		{
+		case 1:
+			firstNum = 0;
+			break;
+		case 2:
+			firstNum = 10;
+			break;
+		case 3:
+			firstNum = 20;	
+			break;
+		case 4:
+			firstNum = 30;	
+			break;
+		case 5:
+			firstNum = 40;	
+			break;
+		case 6:
+			firstNum = 50;	
+			break;
+		case 7:
+			firstNum = 60;	
+			break;
+		case 8:
+			firstNum = 70;	
+			break;
+		case 9:
+			firstNum = 80;	
+			break;
+		case 10:
+			firstNum = 90;	
+			break;
+		case 11:
+			firstNum = 100;	
+			break;
+		case 12:
+			firstNum = 110;	
+			break;
+		case 13:
+			firstNum = 120;	
+			break;
+		}
+
+		if (13 == currentPage)
+		{
+			document.getElementById("divBlock009").style.visibility = "hidden";
+			document.getElementById("divBlock010").style.visibility = "hidden";
+			document.getElementById("ApplyButton009").style.visibility = "hidden";
+			document.getElementById("ApplyButton010").style.visibility = "hidden";
+			document.getElementById("CancelButton009").style.visibility = "hidden";
+			document.getElementById("CancelButton010").style.visibility = "hidden";
+		}
+		else
+		{
+			document.getElementById("divBlock009").style.visibility = "visible";
+			document.getElementById("divBlock010").style.visibility = "visible";
+		}
+		
+		for (var i=0; i<10; i++)
+		{
+			var labelId = "label"+num[i];
+			var labelName = "TV-"+num[firstNum+i]+":";
+			var inputRxNameId = "inputRxName"+num[i];
+			//console.log(inputRxNameId);
+			document.getElementById(labelId).innerHTML = labelName;
+			document.getElementById(inputRxNameId).value = window.parent.rxName[firstNum+i];
+		}
+	}
+	
+	document.getElementById("buttonUp").style.backgroundColor = "#4d4d4d";
+	//alert("UP");
+}
+
+function rxNextPage()
+{
+	document.getElementById("buttonNext").style.backgroundColor = "green";
+	var firstNum = 0;
+	if (currentPage >= 1 && currentPage <= 13)
+	{
+		//console.log(currentPage);
+		if (currentPage < 13)
+		{
+			currentPage++;
+		}
+		switch (currentPage)
+		{
+		case 1:
+			firstNum = 0;
+			break;
+		case 2:
+			firstNum = 10;
+			break;
+		case 3:
+			firstNum = 20;	
+			break;
+		case 4:
+			firstNum = 30;	
+			break;
+		case 5:
+			firstNum = 40;	
+			break;
+		case 6:
+			firstNum = 50;	
+			break;
+		case 7:
+			firstNum = 60;	
+			break;
+		case 8:
+			firstNum = 70;	
+			break;
+		case 9:
+			firstNum = 80;	
+			break;
+		case 10:
+			firstNum = 90;	
+			break;
+		case 11:
+			firstNum = 100;	
+			break;
+		case 12:
+			firstNum = 110;	
+			break;
+		case 13:
+			firstNum = 120;	
+			break;
+		}
+		
+		if (13 == currentPage)
+		{
+			document.getElementById("divBlock009").style.visibility = "hidden";
+			document.getElementById("divBlock010").style.visibility = "hidden";
+			document.getElementById("ApplyButton009").style.visibility = "hidden";
+			document.getElementById("ApplyButton010").style.visibility = "hidden";
+			document.getElementById("CancelButton009").style.visibility = "hidden";
+			document.getElementById("CancelButton010").style.visibility = "hidden";
+		}
+		else
+		{
+			document.getElementById("divBlock009").style.visibility = "visible";
+			document.getElementById("divBlock010").style.visibility = "visible";
+		}
+		
+		for (var i=0; i<10; i++)
+		{
+			var labelId = "label"+num[i];
+			var labelName = "TV-"+num[firstNum+i]+":";
+			var inputRxNameId = "inputRxName"+num[i];
+			
+			//console.log(inputRxNameId);
+			document.getElementById(labelId).innerHTML = labelName;
+			document.getElementById(inputRxNameId).value = window.parent.rxName[firstNum+i];
+		}
+	}
+	document.getElementById("buttonNext").style.backgroundColor = "#4d4d4d";
+	//alert("NEXT");
+}
+
+</script>
+ 
+</head>
+<!--body class="" onload="changRxNameInit();"-->
+<body class="">
+	<div class="RxName">
+		<script>
+			LoopButton();
+		</script>
+		<input class="buttonBottom" id="buttonUp" type="button" value="PREV" onclick="rxUpPage()">
+		<input class="buttonBottom" id="buttonNext" type="button" value="NEXT" onclick="rxNextPage()">
+	</div>
+</body>
+</html>

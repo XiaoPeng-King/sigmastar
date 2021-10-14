@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+
+body{
+	width: auto; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	background-color:#262626;
+	padding:0;
+	border-left: 1px solid  white;
+	/*border-bottom: 1px solid  white;*/
+}
+
+div{
+	text-align:center;
+}
+
+.div{
+	/*background-color:#F00;*/
+	overflow:auto;
+}
+
+.div_mode-text{
+	height:35px;
+	color: white;
+	
+}
+
+.ModeButton{
+	height: 95px;
+	width: 220px;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#4d4d4d; /*边框颜色*/
+	border-radius:10px;
+	font-size:1.1rem;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.SetButton{
+	/*float:right;*/
+	/*font-size:30px;*/
+	font-size: 1rem;
+	width:200px;
+	height:90px;
+	color:white;
+	font-weight:bold;
+	/*margin-right:6%;*/
+	background-color:#333333;
+	border-color:#666666;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+#modlue{
+	display:none;
+	/*position:fixed;*/
+	position: absolute;
+	left:50%;
+	top:50%;
+	width:200px;
+	height:270px;
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	/*visibility:hidden;*/
+	background-color:#666666;
+	/*z-index:80;*/
+	z-index:1002;
+	border:1px solid grey;
+	overflow: hidden;
+}
+
+#page{
+	margin:10px 0 0 0;
+	/*转换为内联块 才可以增加a标签的大小*/
+	display: inline-block;
+	background: green;
+	/*14 12*/
+	padding: 10px 20px;
+	font-size: 15px;
+	border: green;
+	/*把行高设置和文字一样 方便计算a标签的高度*/
+	line-height: 15px;
+	color: white;
+	text-decoration: none;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+.black_overlay {
+	display: none;
+	position: absolute;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	height: 100%;
+	background-color:#524f4f;
+	z-index:1001;
+	-moz-opacity: 0.8;
+	opacity:.50;
+	filter: alpha(opacity=80);
+}
+
+</style>
+
+<script>
+var ModeValue;
+var ModeID = ['Mode01', 'Mode02', 'Mode03', 'Mode04', 'Mode05', 'Mode06', 'Mode07', 'Mode08', 'Mode09', 'Mode10'];
+var tmp = 1;
+var nowModeId = "Mode01";
+var lastModeId = "Mode01";
+
+function popupSet(num)
+{
+	var i, id;
+	var fade = document.getElementById("fade");
+	var page = window.parent.currentRightPageNum;
+	ModeValue = num;
+	if (1 == page)
+	{
+		nowModeId = ModeID[ModeValue-1];
+	}
+	else
+	{
+		nowModeId = ModeID[ModeValue+4];
+	}
+	
+	//alert(id);
+	//document.getElementById("modlue").style.visibility = "visible";	
+	document.getElementById("modlue").style.display = "block";
+	if (1 == tmp)
+	{
+		for (i=0; i<5; i++)
+		{
+			if (num-1 == i)
+			{
+				document.getElementById(ModeID[i]).style.backgroundColor="green";
+				document.getElementById(ModeID[i]).removeAttribute("disabled");
+			}
+			else
+			{
+				document.getElementById(ModeID[i]).setAttribute("disabled", true);
+			}
+		
+		}
+		tmp = 0;
+	}
+	
+	fade.style.display='block';
+	/*
+	if (1 == tmp)
+	{
+		document.getElementById("modlue").style.visibility = "visible";
+
+		for (i=0; i<5; i++)
+		{
+			if (id == ModeID[i])
+			{
+				document.getElementById(id).style.backgroundColor="green";
+				document.getElementById(ModeID[i]).removeAttribute("disabled");
+			}
+			else
+			{
+				document.getElementById(ModeID[i]).setAttribute("disabled", true);
+			}
+		
+		}
+		tmp = 0;
+	}
+	/*
+	else
+	{
+		document.getElementById("modlue").style.visibility = "hidden";
+		document.getElementById(id).style.backgroundColor="#4d4d4d";
+		
+		for (i=0; i<5; i++)
+		{
+			document.getElementById(ModeID[i]).removeAttribute("disabled");
+		}
+		tmp = 1;
+	}
+	*/
+}
+
+function popupCancel()
+{
+	var i;
+	tmp = 1;
+	//var page = window.parent.currentRightPageNum;
+	var fade = document.getElementById("fade");
+	//document.getElementById("modlue").style.visibility = "hidden";
+	document.getElementById("modlue").style.display = "none";
+	
+	ModeId = ModeID[ModeValue-1];
+	
+	//console.log(ModeId);
+	document.getElementById(ModeId).style.backgroundColor="#4d4d4d";
+	for (i=0; i<5; i++)
+	{
+		document.getElementById(ModeID[i]).removeAttribute("disabled");
+	}
+	fade.style.display='none';
+}
+
+function popupSaveMode()
+{
+	var ret;
+	//var fade = document.getElementById("fade");
+	ret = saveCurrentMode(nowModeId);
+	if (1 ==ret)
+	{
+		alert("save mode succed");
+	}
+	//fade.style.display='none';
+}
+
+function popupApply()
+{
+	tmp = 1;
+	var ret;
+	var fade = document.getElementById("fade");
+	if (0 == window.parent.tmp5)
+	{
+		alert("please close info display, then apply this mode !");
+		return ;
+	}
+	ret =  modeStateNow(nowModeId);
+	//console.log(window.parent.modeName);
+	if (1==ret)
+	{
+		//console.log(window.parent.currentRightPageNum);
+		if (1 == window.parent.currentRightPageNum)
+		{
+			for (var i=0; i<5; i++)
+			{
+			
+				if (ModeID[i]==nowModeId)
+				{
+					document.getElementById(ModeID[i]).style.backgroundColor="#006000";
+					//document.getElementById("modlue").style.visibility = "hidden";
+					//document.getElementById("modlue").style.display = "none";				
+				}
+				else
+				{
+					document.getElementById(ModeID[i]).style.backgroundColor="#4d4d4d";
+					document.getElementById(ModeID[i]).removeAttribute("disabled");
+				}
+			}
+
+		}
+		else
+		{
+			for (var i=5; i<10; i++)
+			{
+			
+				if (ModeID[i]==nowModeId)
+				{
+					document.getElementById(ModeID[i-5]).style.backgroundColor="#006000";
+					//document.getElementById("modlue").style.visibility = "hidden";
+					//document.getElementById("modlue").style.display = "none";				
+				}
+				else
+				{
+					document.getElementById(ModeID[i-5]).style.backgroundColor="#4d4d4d";
+					document.getElementById(ModeID[i-5]).removeAttribute("disabled");
+				}
+			}
+		}
+		
+
+		
+		lastModeId = nowModeId;
+
+		//setTimeout(function(){window.parent.onloading();}, "1500");
+		setTimeout(function(){window.parent.onloading();}, "8000");
+		setTimeout(
+			function(){
+					window.parent.document.getElementById("myIframe_left").contentWindow.location.reload();
+				}
+		, "8100");
+		
+		
+		document.getElementById("modlue").style.display = "none";
+	}
+	else
+	{
+		//document.getElementById(lastModeId).style.backgroundColor="#006000";
+		//document.getElementById("applyId").style.backgroundColor="red";
+	}
+	//console.log(window.parent.modeName);
+	fade.style.display = "none";
+}
+</script>
+
+
+</head>
+<!--body class="body-button" onload="SetRxRename();-->
+<body class="body-button" onload="ModeInit(1);">
+	<h2 style="color:white; text-align:center;"> SCENE PRESET </h2>
+	<div id="modlue">
+		<div id="cancleDiv">
+			<div class="MyBtn">
+				<div>
+					<button class="SetButton" id="applyId" onclick="popupApply();">APPLY</button>
+				</div>
+				<div>
+					<button class="SetButton" id="saveId" onclick="popupSaveMode();">SAVE MODE</button>
+				</div>
+				<div>
+					<button class="SetButton" id="cancelId" onclick="popupCancel();" >CANCEL</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div>
+		<input id="Mode01" type="button" class="ModeButton" onclick="popupSet(1);" value=""/>
+	</div>
+	<div class="div_mode-text">
+		<span id="text-1">MODE-01</span>
+	</div>
+	<div>
+		<input id="Mode02" type="button" class="ModeButton" onclick="popupSet(2);"/>
+	</div>
+	<div class="div_mode-text">
+		<span id="text-2">MODE-02</span>
+	</div>
+	<div>
+		<input id="Mode03" type="button" class="ModeButton" onclick="popupSet(3);"/>
+	</div>
+	<div class="div_mode-text">
+		<span id="text-3">MODE-03</span>
+	</div>
+	<div>
+		<input id="Mode04" type="button" class="ModeButton" onclick="popupSet(4);"/>
+	</div>
+	<div class="div_mode-text">
+		<span id="text-4"> MODE-04</span>
+	</div>
+	<div>
+		<input id="Mode05" type="button" class="ModeButton" onclick="popupSet(5);"/>
+	</div>
+	<div class="div_mode-text">
+		<span id="text-5">MODE-05</span>
+	</div> 
+
+	<div>
+        <input id="page" type="button" onclick="updateModePageContent();" value="NEXT"/>
+	</div>
+	
+	<div id="fade" class="black_overlay"></div>
+</body>
+</html>

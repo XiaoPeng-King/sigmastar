@@ -1,0 +1,309 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+<HEAD>
+<META content="text/html; charset=utf-8" http-equiv="Content-Type">
+<TITLE>Main stream settings-HD Encoder</TITLE>
+<link type="text/css" rel="stylesheet" href="css/form.css"/>
+<LINK rel="stylesheet" type="text/css" href="css/main.css">
+<script src="Js/jquery-1.4.1.min.js" type="text/javascript"></script>
+<script src="Js/platform.js" type="text/javascript"></script>
+<script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+<script type="text/javascript">  
+var hostip = window.location.host;
+var font_color = new Array("black", "white", "red", "yellow", "green", "blue", "orange", "brown", "pink", "purple");
+var bg_color = new Array("aquamarine", "black", "white", "red", "yellow", "green", "blue", "orange", "brown", "pink", "purple");
+function GetAjax() {
+	var menu_html = showMenuE("SetMedia0E.html");
+   	$("#menu_bar").html(menu_html);
+
+	var VideoTypehtml = showEncodeType();
+   	$("#VideoType").html(VideoTypehtml);
+
+	$.ajax ({
+		type: "GET",
+    	url: "http://" + hostip + "/cgi-bin/get_codec.cgi",
+		dataType: "xml",
+		cache: false,
+		success: function(data) {
+
+			var fps = $(data).find("encoder").children("fps").text();
+			var bitrate = $(data).find("encoder").children("bitrate").text();
+      		var gop = $(data).find("encoder").children("gop").text();
+			var rtsp_port = $(data).find("encoder").children("rtsp_port").text();
+			var rtsp_url = $(data).find("encoder").children("rtsp_url").text();
+			var rtsp_enb = $(data).find("encoder").children("rtsp_enb").text();
+     
+			var rtp_port = $(data).find("encoder").children("rtp_port").text();
+			var rtp_url = $(data).find("encoder").children("rtp_url").text();
+
+      		var rtmp_port = $(data).find("encoder").children("rtmp_port").text();
+      		var rtmp_url = $(data).find("encoder").children("rtmp_url").text();
+      		var rtmp_enb = $(data).find("encoder").children("rtmp_enb").text();
+
+	  		$("#fpsTxt").attr("value", fps);
+	  		$("#gopTxt").attr("value", gop);
+	  		$("#bitrateTxt").attr("value", bitrate);
+
+	  		$("#RtspPortTxt").attr("value", rtsp_port);
+	  		$("#RtspTxt").attr("value", rtsp_url);
+	  		$("#RtspSle").attr("value", rtsp_enb);
+
+	  		$("#MulPortTxt").attr("value", rtp_port);
+	  		$("#MulIpTxt").attr("value", rtp_url);
+
+	  		$("#rtmp_server_portTxt").attr("value", rtmp_port);
+	  		$("#rtmp_server_ipTxt").attr("value", rtmp_url);
+	  		$("#rtmp_server_ipSle").attr("value", rtmp_enb);
+	  			  		
+    	}
+  	});
+}
+
+function SetIpAjax() {
+	var validated = IsValidate();
+	if (validated == true) {
+		var rtsp_src = $("#RtspTxt").val();
+		var rtsp_open = $("#RtspSle").val();
+		var rtsp_port = $("#RtspPortTxt").val();
+		
+		var mul_ip = $("#MulIpTxt").val();
+		var mul_port = $("#MulPortTxt").val();
+			
+		
+		
+		var rtmp_server_url = $("#rtmp_server_ipTxt").val();
+		var rtmp_server_port = $("#rtmp_server_portTxt").val();
+		//var rtmp_stream_name = $("#rtmp_stream_nameTxt").val();
+		//rtmp_stream_name=encodeURIComponent(rtmp_stream_name);
+		var rtmp_enable = $("#rtmp_server_ipSle").val();
+
+		
+		$.ajax({
+			type: "GET",
+			url: "http://"+ hostip +"/cgi-bin/set_protocol.cgi?rtsp_name=" + rtsp_src + "&rtsp_sle=" + rtsp_open + "&rtsp_port=" + rtsp_port +"&mul_ip=" + mul_ip + "&mul_port=" + mul_port + "&rtmp_port=" + rtmp_server_port + "&rtmp_sle=" + rtmp_enable + "&rtmp_url=" + rtmp_server_url,
+			dataType: "text",
+			cache: false,
+			success: function(data) {
+				if (data == "succeed") {
+					alert('Set successfully, please reboot your device!');
+				} else {
+					alert('Failed to set!');
+				}
+			}
+		});
+	}
+}
+
+function SetCodec() {
+	var validated = checkCodeValidate();
+	if (validated == true) {
+		var Bitrate = $("#bitrateTxt").val();
+		//var fps = $("#fpsTxt").val();
+		var fps = "30";
+		var venc_gop = $("#gopTxt").val();
+		$.ajax({
+			type: "GET",
+			url: "http://"+ hostip +"/cgi-bin/set_codec.cgi?BitRate=" + Bitrate +"&fps=" + fps + "&gop="+ venc_gop,
+			dataType: "text",
+			cache: false,
+			success: function(data) {
+				if (data == "succeed") {
+					alert('Set successfully!');
+				} else {
+					alert('Failed to set!');
+				}
+			}
+		});
+	}
+}
+
+function checkCodeValidate() {
+	var validated = true;
+	var fpsTxt = $('#fpsTxt').val();
+	var gopTxt = $("#gopTxt").val();
+	var bitrateTxt=$("#bitrateTxt").val();
+	var Intfps = IsInteger(fpsTxt);
+	var IntVenc_gop = IsInteger(gopTxt);
+	var Intbitrate = IsInteger(bitrateTxt);
+	if (gopTxt < 2 || gopTxt > 200 || IntVenc_gop == false) {
+		alert('GOP should be an integer between 2-200');
+		validated = false;
+	}  else if (bitrateTxt<200 || bitrateTxt > 25000 || Intbitrate ==false){
+	    alert('Data Rate should be an integer betwwen 200 - 25000');
+	    validated = false;
+	} 
+	return validated;
+}
+
+function IsValidate() {
+	var validated = true;
+	var HttpTxt = $("#HttpTxt").val();
+	var RtspTxt = $("#RtspTxt").val();
+	var MulIpTxt = $("#MulIpTxt").val();
+	var MulPortTxt = $("#MulPortTxt").val();
+	var StreamSle = $('#StreamSle').val();
+	var HttpPortTxt = $('#HttpPortTxt').val();
+	var RtspPortTxt = $('#RtspPortTxt').val();
+	var gopTxt = $("#gopTxt").val();
+	var rtmp_server_ipTxt = $("#rtmp_server_ipTxt").val();
+	var rtmp_server_portTxt = $("#rtmp_server_portTxt").val();
+	var rtmp_stream_nameTxt = $("#rtmp_stream_nameTxt").val();
+	var rtmp_app_nameTxt = $("#rtmp_app_nameTxt").val();
+	if (HttpTxt == "" || RtspTxt == "" || MulIpTxt == "" || MulPortTxt == "" || HttpPortTxt == "" || RtspPortTxt == "" || rtmp_server_ipTxt == "" || rtmp_server_portTxt == "" || rtmp_stream_nameTxt == "" || rtmp_app_nameTxt == "") {
+		alert('The content must not be empty!');
+		validated = false;
+	}
+	var IntPort = IsInteger(MulPortTxt);
+	var IntHttpPort = IsInteger(HttpPortTxt);
+	var IntRtspPort = IsInteger(RtspPortTxt);
+	var IntRtmp_server_port = IsInteger(rtmp_server_portTxt);
+	if (RtspPortTxt < 1 || RtspPortTxt > 65535 || IntRtspPort == false) {
+		alert('RTSP port should be an integer in 1-65535!');
+		return false;
+	} else if (!checkIp(MulIpTxt)) {
+		alert('Wrong Multicast IP format!');
+		validated = false;
+	} else if (MulPortTxt < 1 || MulPortTxt > 65535 || IntPort == false) {
+		alert('Multicast port should be an integer in 1-65535!');
+		return false;
+	} 
+	return validated;
+}
+
+function IsInteger(interger) {
+	var IsInteger = true;
+	if (parseInt(interger) == interger) {
+		IsInteger = true;
+	} else {
+		IsInteger = false;
+	}
+	return IsInteger;
+}
+
+function checkIp(str) {
+	var ss = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+	return ss.test(str);
+}
+
+
+function changeLan() {
+	var Language = $("#LanSle").val();
+	if (Language == 'Chinese') {
+		$.ajax({
+			type: "GET",
+			url: "http://" + hostip + "/cgi-bin/set_sys.cgi?type=lang&lang=0",
+			dataType: "text",
+			cache: false
+		});
+	window.location.href = 'SetMedia0.html';
+	}
+}
+
+
+</script>
+<META name="GENERATOR" content="MSHTML 9.00.8112.16457">
+</HEAD>
+<BODY onload="GetAjax();">
+<div class="header">
+ <div class="header_b"> <a href="/" class="logo"><img src="css/en/logo.jpg" /></a>
+  <p class="logo_v">TX HD Encoder</p>
+  <div class="language">
+   <select onchange="changeLan()" id='LanSle'>
+    <option value="Chinese">Chinese</option>
+    <option value="English" selected="selected">English</option>
+   </select>
+  </div>
+  <ul>
+   <li><a href="http://www.baidu.com/" target="_blank">Service and Support</a></li>
+  </ul>
+ </div>
+</div>
+ <dd id="menu_bar"></dd>
+<DIV class="clear"></DIV>
+<DIV class="wrapper">
+ <h1 class="h1_SetHdmiE">SetHdmi</h1>
+ <DIV class="content">
+  <DIV class="in author t_index_1">
+   <H2>Encoder settings</H2>
+  </DIV>
+  <DIV class="check_main"> </DIV>
+  <!-- Form -->
+  <DIV class="in">
+   <div class="write">
+    <dl>
+		<dt>Enc type:</dt>
+	  <dd id="VideoType"> </dd>
+    </dl>
+    <dl>
+     <dt>Interval:</dt>
+     <dd>
+      <input id="gopTxt" name="gopTxt"  valid="required"  maxlength="18"  type ="text"/>
+      [2-200] </dd>
+    </dl>
+    <div id="cbr" style="display:block;">
+     <dl>
+      <dt>Bitrate:</dt>
+      <dd>
+       <input id="bitrateTxt" name="bitrateTxt"  valid="required"  maxlength="18"  type ="text"/>
+       [200-25000](K) </dd>
+     </dl>
+    </div>
+	 <!--dl>
+      <dt>&nbsp;</dt>
+      <dd>
+       <input type="button" value="Apply" name ="insert" class="com_btn_E b_shezhiE" onclick="SetCodec()"  id="subBut" />
+      </dd>
+     </dl-->
+    </div>
+    </DIV>
+    </DIV>
+ <!--DIV class="content">
+  <DIV class="in author t_index_1">
+   <H2>Stream protocol settings</H2>
+  </DIV>
+  <DIV class="check_main"> </DIV>
+  <DIV class="in">
+   <div class="write">
+    <dl>
+     <dt>RTSP:</dt>
+     <dd>
+      <input id="RtspTxt" name="RtspTxt"  maxlength="1024"  type ="text"/>
+      <select id="RtspSle" name="RtspSle">
+       <option  value="0" selected ="selected">Disable</option>
+       <option  value="1" >Enable</option>
+      </select>
+      Format: main (string made up by letters and numbers) </dd>
+    </dl>
+    <dl>
+     <dt>RTSP port:</dt>
+     <dd>
+      <input id="RtspPortTxt" name="RtspPortTxt" maxlength="18" type ="text"/>
+      [1-65535] </dd>
+    </dl>
+    <dl>
+     <dt>Multicast IP:</dt>
+     <dd>
+      <input id="MulIpTxt" name="MulIpTxt"  maxlength="18"  type ="text"/>
+     </dd>
+    </dl>
+    <dl>
+     <dt>Multicast port:</dt>
+     <dd>
+      <input id="MulPortTxt" name="MulPortTxt"  maxlength="18"  errmsg="Multicast port can't be null!" type ="text"/>
+      [1-65535] </dd>
+    </dl>
+    <dl>
+     <dt>&nbsp;</dt>
+     <dd>
+      <input type="button" value="Apply" name ="insert" class="com_btn_E b_shezhiE" onclick="SetIpAjax()"  id="subBut" />
+     </dd>
+    </dl>
+   </div>
+  </DIV>
+ </DIV-->
+
+</BODY>
+</HTML>

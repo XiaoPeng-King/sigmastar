@@ -1,0 +1,53 @@
+TOPDIR=/home/king/Work/sigmastar/HOT/TX/mi_demo
+NFS_DIR=/nfs_root
+
+CC=arm-linux-gnueabihf-9.1.0-gcc
+STRIP=arm-linux-gnueabihf-9.1.0-strip
+
+INCLUDEFLAGS := -I$(TOPDIR)/jedi/internal/common
+INCLUDEFLAGS += -I$(TOPDIR)/mi_include/release/include
+INCLUDEFLAGS += -I$(TOPDIR)/mi_include/drivers/sstar/include
+
+CFLAGS = -Wall -g -mthumb -pipe -fPIC -DLINUX_OS -Wl,--gc-sections 
+
+LIBS := -lmi_sys
+LIBS += -lmi_common
+LIBS += -lmi_isp
+LIBS += -lmi_vpe
+LIBS += -lmi_sensor
+LIBS += -lmi_ai
+LIBS += -lmi_ao
+LIBS += -lmi_venc
+LIBS += -lmi_vif
+LIBS += -lcus3a
+LIBS += -lispalgo
+LIBS += -lcam_fs_wrapper
+LIBS += -lcam_os_wrapper
+LIBS += -lrt
+LIBS += -lpthread
+LIBS += -lm
+LIBS += -ldl
+
+LIBS_PATH := -L$(TOPDIR)/mi_libs/dynamic
+LIBS_PATH += -L$(TOPDIR)/ex_libs/dynamic
+
+SRC := $(wildcard *.c)
+OBJ := $(SRC:%.c=%.o)
+
+#OBJ  := $(patsubst%c,%o,$(wildcard *.c))
+
+TARGET := main
+
+all: $(TARGET)
+
+#$(TARGET):st_main_venc_264.c $(OBJ)
+#	$(CC) $(CFLAGS) $(INCLUDEFLAGS) $(LIBS) $(LIBS_PATH) $^ -o $@
+
+$(TARGET):main.c ringfifo.o
+	$(CC) $(CFLAGS) $(INCLUDEFLAGS) $(LIBS) $(LIBS_PATH) $^ -o $@
+
+install:
+	cp $(TARGET) $(NFS_DIR) -f
+
+clean:
+	rm -rf $(OBJ) $(TARGET)

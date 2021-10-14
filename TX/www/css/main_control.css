@@ -1,0 +1,217 @@
+@charset "utf-8";
+
+
+html {
+  background-color: #bfbfbf;; /*HTML 背景色*/
+  
+}
+
+
+/*body start*/
+body {
+  
+  margin: 0 auto;
+  //border: 5px solid black;
+  background-color: #666666;
+  padding: 1%;
+}
+
+body > * {
+  background-color: #444444; /*其他页面的背景色*/
+  padding: 1%;
+}
+
+/*index*/
+.body-index {
+	//width: 80%; /*body部分占整个HTML的大小*/
+	width: auto; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	min-width: 600px; /*页面最小宽度*/
+	max-width: 1200px; /*页面最大宽度*/
+	background-color: #666666; /*主页面的背景色*/
+	padding:0 20px 20px 20px;
+	border: 1px solid black; /*边界样式*/
+}
+
+/*button*/
+.body-button {
+	width: 100%;
+	text-align:center;
+	padding: 0;
+	//margin-right: 150px;
+	//min-width: 800px;
+	//background-color: #FF9500;
+	//padding:0 20px 20px 20px;
+	//border: 1px solid black;
+}
+
+/*body end*/
+
+/*div start*/
+
+div {
+	flex: 1;
+	
+	padding: 1%;
+	max-width: 100%;
+}
+
+.div-c{ 
+	flex: 1;
+	display: block;
+	float:left;
+	width:65%;
+	//margin-left: 1px;
+	//margin-right: 15px;
+	//border:3px solid #000;
+	//border-color:red;
+	//color: red;
+} 
+
+.div-d {
+	display: block;
+	float:right;
+	width:30%;
+	//margin-right: 15x;
+	//margin-right: 5x;
+	text-align:center;
+	//border:3px solid #000;
+	//border-color:blue;
+	//color: blue;
+} 
+
+.div_select {
+	display: block;
+	border: red solid thin; /*设置边框样式*/
+	outline: #ffffff outset thick;
+	border-color:#666666;
+	color: blue;
+	background-color:#666666;
+}
+
+.div-rxSelect {
+	display: block;
+	position: static; /**/
+}
+
+/* div end */
+
+.name-select{
+	//text-align:center;
+	margin-top: 880px; /*距页顶的距离*/
+	//1.3rem;
+}
+
+/*
+.body-button
+{
+	text-align:center;
+	border:2px solid #a1a1a1;
+	padding:10px 40px; 
+	background:#dddddd;
+	width:350px;
+	border-radius:25px;
+	-moz-border-radius:25px; // 老的 Firefox 
+}
+*/
+
+ 
+
+header {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 10px;
+  //display: flex;
+  //flex-flow: row wrap;
+}
+
+
+/*button start*/
+
+.Mode_btn {
+	background:#222222;
+	width:144px;
+	height:144px;
+	color: red;
+	background-color: #333333;
+	text-align:center;
+	font-size: 1.3rem;
+	//border:2px solid #a1a1a1;
+	//padding:10px 40px; 
+	//background:#dddddd;
+	//width:350px;
+	border-radius:72px;
+}
+
+.Name_btn {
+	width:110px;
+	height:40px;
+	font-size: 1rem;
+}
+/*button end*/
+
+.selectRx {
+	width:320px;
+	height:40px;
+	color:white;
+	//margin-left:5%;
+	font-size: 1.3rem; /*设置字体大小*/
+	margin-left:auto;
+	margin-right:auto;
+	background-color:#666666; /*背景颜色*/
+	border-color:#666666; /*边框颜色*/
+	border: 0; /*隐藏边框大小*/
+    appearance:none; /*清除select在不同浏览器中的默认样式，主要是下拉箭头*/
+    -moz-appearance:none;   
+    -webkit-appearance:none;
+	//-ie-appearance:none;
+}
+
+
+.selectRename {
+	width:90px;
+	height:40px;
+	font-size: 1rem;
+	
+}
+
+label {
+	font-size: 1.3rem;
+}
+
+selected {
+	font-size: 2rem;
+	//margin-left:5%;
+}
+
+.input_name {
+	//margin-left:5%;
+	margin-left:auto;
+	width:250px;
+	height:33px;
+	font-size: 1.3rem;
+	background-color:#666666;
+	border-color:#666666;
+	outline: none;
+	border: 0;
+	color: red;
+}
+
+.input_rename {
+	width:200px;
+	height:35px;
+	font-size: 1.3rem;
+}
+
+h1 {
+  font-size: 4rem;
+  text-align: center;
+  text-shadow: 2px 2px 10px black;
+}
+
+
+
+/**--------------表单开始---------------**/
+
+
+/**--------------表单结束---------------**/

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=1.0, user-scalable=yes" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<head>
+
+<!--link rel="icon" href="./css/logo_icon.png" type="image/x-icon"/-->
+<script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+<script type="text/javascript" src="Js/platform.js"></script>
+<script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+<script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+	html{
+		margin:0;
+		padding:0;
+		/*background-color:#999999;*/
+		background-color:#262626;
+		/*min-width: 800px; /*页面最小宽度*/
+		/*max-width: 1200px; /*页面最大宽度*/
+		min-width: 720px; /*页面最小宽度*/
+		max-width: 1200px; /*页面最大宽度*/
+	}
+	
+	body{
+		width: auto; /*body部分占整个HTML的大小*/
+		margin:0 auto; 
+		min-width: 720px; /*页面最小宽度*/
+		max-width: 1200px; /*页面最大宽度*/
+		background-color:#262626;
+		/*background-image:url(./logo_max.png);*/
+	}
+
+	main{
+		position: relative;
+		min-width: 720px; /*页面最小宽度*/
+		max-width: 1200px; /*页面最大宽度*/
+		background-color:#262626;
+	}
+	
+	header{
+		background-color:#4d4d4d;
+		margin:0 auto; 
+		color:white;
+		line-height: 50px;
+		
+	}
+	
+	body > * {
+		
+		background-color: #4d4d4d; /*其他页面的背景色*/
+		/*background-color: #444444; /*其他页面的背景色*/
+		/*padding: 1%;*/
+	}
+
+	h1{
+		text-align:center;
+		background-color:#4d4d4d;
+		margin:0 auto; 
+		height: 50px;
+		/*background-image:url(./logo_max.png);*/
+	}
+	
+	div{
+		text-align:center;
+	}
+	
+	.div{
+	
+		overflow:auto;
+	}
+	
+	#div-left{ 
+		flex: 1;
+		display: block;
+		float:left;
+		width:60%;
+		
+	}
+	
+	#div-right{
+		display: block;
+		float:right;
+		width:40%;
+		text-align:center;
+	}
+	
+	/*
+	.RXBotton{
+		height: 100px;
+		width: 100px;
+		background-color:#4d4d4d;
+		//-webkit-appearance : none ;
+	}
+	.ModeButton{
+		height: 100px;
+		width: 100px;
+		background-color:#4d4d4d;
+		//-webkit-appearance : none ; 
+	}
+	*/
+	#RENAME{
+		position: relative;
+		top: 50%;
+		transform: translateY(-50%);
+		overflow:auto;
+		
+		height: 100px;
+		width: 250px;
+		background-color:#4d4d4d;
+		color: white;
+		font-size: 1.3rem;
+		border-color:#4d4d4d; /*边框颜色*/
+		border-radius:10px;
+		
+		-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+	}
+	
+	#INFO{
+		position: relative;
+		top: 50%;
+		transform: translateY(-50%);
+		overflow:auto;
+
+		text-align:center;
+		height: 100px;
+		width: 250px;
+		background-color:#4d4d4d;
+		color: white;
+		font-size: 1.3rem;
+		border-color:#4d4d4d; /*边框颜色*/
+		border-radius:10px;
+		
+		-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+	}
+	
+	.div_rename{
+		float:left;
+		width:50%;
+		height:120px;
+		line-height:100px;
+		background-color:#262626;
+		/*display:inline-block;*/
+	}
+	
+	.div_info{
+		float:right;
+		width:50%;
+		height:120px;
+		line-height:100px;
+		background-color:#262626;
+		/*display:inline-block;*/
+	}
+	
+	#div_popupRename{
+		position:absolute;
+		
+		top:505px;
+		
+		width:58%;
+		min-width: 400px; /*页面最小宽度*/
+		max-width: 720px; /*页面最大宽度*/
+		
+		height:270px;
+		visibility:hidden;
+		background-color:#4d4d4d;
+		z-index:100;
+		overflow: hidden;
+	}
+	
+	#div_popupTxSelectButton{
+		position:absolute;
+		right: 0px;
+		
+		width:41%;
+		height:780px;
+		max-width: 500px;
+		
+		visibility:hidden;
+		background-color:#4d4d4d;
+		z-index:100;
+		
+		overflow: hidden;
+	}
+	/*
+	.popupChangeName{
+		position:absolute;
+		right: 0px;
+		
+		width:41%;
+		min-width: 320px;
+		max-width: 480px;
+		height:720px;
+		
+		visibility:hidden;
+		background-color:#4d4d4d;
+		z-index:100;
+		
+		overflow: hidden;
+	}
+	*/
+	
+	#div_popupChangeModeName{
+		position:absolute;
+		right: 0px;
+		
+		width:41%;
+		min-width: 320px;
+		max-width: 480px;
+		height:780px;
+		
+		visibility:hidden;
+		background-color:#4d4d4d;
+		z-index:100;
+		
+		overflow: hidden;
+	}
+	
+	#div_popupChangeTxName{
+
+		position:absolute;
+		right: 0px;
+		
+		min-width: 320px;
+		max-width: 480px;
+
+		width:41%;
+		height:780px;
+		
+		visibility:hidden;
+		background-color:#4d4d4d;
+		z-index:100;
+		
+		overflow: hidden;
+	}
+	
+	#div_popupChangeRxName{
+		
+		position:absolute;
+		right: 0px;
+		
+		min-width: 320px; 
+		max-width: 480px;
+		
+		width:41%;
+		height:780px;
+		
+		visibility:hidden;
+		background-color:#4d4d4d;
+		z-index:100;
+		
+		overflow: hidden;
+	}
+	
+	.button_ChangeName{
+		width: 100%;
+		height: 90px;
+		background-color:#4d4d4d;
+		color: white;
+		font-size: 1.1rem;
+		border-color:#080808; /*边框颜色*/
+		-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+	}
+
+	#block{
+		width: 100%;
+		height:20px;
+		background-color:#262626;
+	}
+
+
+* {  
+	-webkit-backface-visibility:  hidden;
+     -webkit-tap-highlight-color:  transparent;
+  }
+
+  img{
+	position: absolute;
+	left:8px;
+	top:5px;
+	/*bottom:65px;*/
+	z-index:10;
+	opacity: 1;
+	width:160px;
+	height:40px;
+}
+</style>
+
+
+<script>
+//var rxName = ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''];
+//var txName = ['','','','','','','','','','','','','','','','','','','','','','','',''];
+
+var tmp1 = 1;
+var tmp2 = 1;
+var tmp3 = 1;
+var tmp4 = 1;
+var tmp5 = 1;
+
+function RenameOnclick()
+{
+	if (tmp1==1)
+	{
+		//console.log(tmp1);
+		document.getElementById("div_popupRename").style.visibility="visible";
+		document.getElementById("RENAME").style.backgroundColor="green";
+		document.getElementById("div_popupTxSelectButton").style.visibility="hidden";
+
+		//console.log(document.getElementById("myIframe_left").contentWindow.tmp);
+		document.getElementById("myIframe_left").contentWindow.tmp = 1;
+		var leftButton=document.getElementById("myIframe_left").contentWindow.document.getElementsByClassName("RXBotton");//.style.backgroundColor="#4d4d4d";
+		
+		for (var i=0; i<leftButton.length; i++)
+		{
+			leftButton[i].style.backgroundColor = "#4d4d4d";
+		}
+		
+		tmp1 = 0;
+	}
+	else
+	{
+		document.getElementById("div_popupChangeTxName").style.visibility="hidden";
+		document.getElementById("TxChangeName").style.backgroundColor="#4d4d4d";
+		
+		document.getElementById("div_popupChangeModeName").style.visibility="hidden";
+		document.getElementById("ModeChangeName").style.backgroundColor="#4d4d4d";
+		
+		document.getElementById("div_popupChangeRxName").style.visibility="hidden";
+		document.getElementById("RxChangeName").style.backgroundColor="#4d4d4d";
+		
+		//document.getElementById("div_popupTxSelectButton").style.visibility="hidden";
+		document.getElementById("div_popupRename").style.visibility="hidden";
+		document.getElementById("RENAME").style.backgroundColor="#4d4d4d";
+		
+		tmp1 = 1;
+		tmp2 = 1;
+		tmp3 = 1;
+		tmp4 = 1;
+	}
+
+}
+
+function TxRenameOnclick()
+{
+	var inputId;
+	if (tmp2==1)
+	{
+		document.getElementById("div_popupChangeTxName").style.visibility="visible";
+		document.getElementById("TxChangeName").style.backgroundColor="green";
+		
+		document.getElementById("div_popupChangeModeName").style.visibility="hidden";
+		document.getElementById("ModeChangeName").style.backgroundColor="#4d4d4d";
+		
+		document.getElementById("div_popupChangeRxName").style.visibility="hidden";
+		document.getElementById("RxChangeName").style.backgroundColor="#4d4d4d";
+		tmp2 = 0;
+		tmp3 = 1;
+		tmp4 = 1;
+
+		for (var i=0; i<10; i++)
+		{
+			inputId = "inputTxName"+num1[i];
+			document.getElementById("myIframe_changeTxName").contentWindow.document.getElementById(inputId).value = txName[i];
+		}
+	}
+	else
+	{
+		document.getElementById("div_popupChangeTxName").style.visibility="hidden";
+		document.getElementById("TxChangeName").style.backgroundColor="#4d4d4d";
+		tmp2 = 1;
+	}
+}
+
+function RxRenameOnclick()
+{
+	var inputId;
+
+	if (tmp3==1)
+	{
+		document.getElementById("div_popupChangeRxName").style.visibility="visible";
+		document.getElementById("RxChangeName").style.backgroundColor="green";
+		
+		document.getElementById("div_popupChangeTxName").style.visibility="hidden";
+		document.getElementById("TxChangeName").style.backgroundColor="#4d4d4d";
+		
+		document.getElementById("div_popupChangeModeName").style.visibility="hidden";
+		document.getElementById("ModeChangeName").style.backgroundColor="#4d4d4d";
+		
+		tmp3 = 0;
+		tmp2 = 1;
+		tmp4 = 1;
+
+		for (var i=0; i<10; i++)
+		{
+			inputId = "inputRxName"+num[i];
+			document.getElementById("myIframe_changeRxName").contentWindow.document.getElementById(inputId).value = rxName[i];
+		}
+	}
+	else
+	{
+		document.getElementById("div_popupChangeRxName").style.visibility="hidden";
+		document.getElementById("RxChangeName").style.backgroundColor="#4d4d4d";
+		tmp3 = 1;
+	}
+
+}
+
+function ModeRenameOnclick()
+{
+	var inputId;
+
+	if (tmp4==1)
+	{
+		document.getElementById("div_popupChangeModeName").style.visibility="visible";
+		document.getElementById("ModeChangeName").style.backgroundColor="green";
+		
+		document.getElementById("div_popupChangeTxName").style.visibility="hidden";
+		document.getElementById("TxChangeName").style.backgroundColor="#4d4d4d";
+		
+		document.getElementById("div_popupChangeRxName").style.visibility="hidden";
+		document.getElementById("RxChangeName").style.backgroundColor="#4d4d4d";
+		
+		tmp4 = 0;
+		tmp2 = 1;
+		tmp3 = 1;
+
+		for (var i=0; i<10; i++)
+		{
+			inputId = "inputModeName"+num1[i];
+			document.getElementById("myIframe_changeModeName").contentWindow.document.getElementById(inputId).value = modeName[i];
+		}
+	}
+	else
+	{
+		document.getElementById("div_popupChangeModeName").style.visibility="hidden";
+		document.getElementById("ModeChangeName").style.backgroundColor="#4d4d4d";
+		tmp4 = 1;
+	}
+}
+	
+
+function displayInfoOnclick()
+{
+	var ret;
+	ret = infoDisplay(tmp5);
+	if(1==ret)
+	{
+		if (1 == tmp5)
+		{
+			document.getElementById("INFO").style.backgroundColor="#006000";
+			
+			tmp5 = 0;
+		}
+		else
+		{
+			document.getElementById("INFO").style.backgroundColor="#4d4d4d";
+			
+			tmp5 = 1;
+		}
+	}
+}
+
+
+</script>
+</head>
+
+<body id="body" onload="">
+	<header id="header" onload="">
+		<!--h1><img src="./css/Wyrestorm_Logo.png" width="auto" height="45" align ="left"/>IP MATRIX &emsp;&emsp;&emsp; </h1-->
+		<h1><width="auto" height="45" />IP MATRIX</h1>
+		<script>onloading();</script>
+		<img src="./css/Wyrestorm_Logo.png">
+	</header>
+	<!--div id="block"></div-->
+	<main id="main">
+		
+		<div id="div-left">
+			
+			<div class="scroll-wrapper" style="width:100%; height:780px;" >
+				<iframe onload="" src="div_left.html" id="myIframe_left" name="myIframe_left" width="100%" height="100%" frameborder="0" type="text/html" scrolling="yes" seamless >
+					<p>Your browser is unsupport </p>
+				</iframe>
+			</div>
+		</div>
+		
+		<div id="div-right">
+			<div class="scroll-wrapper" style="width:100%; height:780px;" >
+				<iframe onload="" src="div_right.html" id="myIframe_right" name="myIframe_right" width="100%" height="100%" frameborder="0" type="text/html" scrolling="yes" seamless >
+					<p>Your browser is unsupport </p>
+				</iframe>
+			</div>
+		</div>
+		
+		<div id="div_popupRename">
+			<div class="div_ChangeName">
+				<input id="RxChangeName" class="button_ChangeName" type="button" value="CHANGE TV NAME" onclick="RxRenameOnclick();"/>
+			</div>
+			<div class="div_ChangeName">
+				<input id="TxChangeName" class="button_ChangeName" type="button" value="CHANGE SOURCE NAME" onclick="TxRenameOnclick();"/>
+			</div>
+			<div class="div_ChangeName">
+				<input id="ModeChangeName" class="button_ChangeName" type="button" value="CHANGE MODE NAME" onclick="ModeRenameOnclick();"/>
+			</div>
+		</div>
+
+		<div id="div_popupChangeModeName" class="popupChangeName">
+			<div class="scroll-wrapper" style="width:100%; height:795px; -webkit-overflow-scrolling:touch; overflow-y:scroll;" >
+				<iframe onload="" src="popupChangeModeName.html" id="myIframe_changeModeName" name="myIframe_right" width="100%" height="100%" frameborder="0" type="text/html" scrolling="yes" seamless >
+					<p>Your browser is unsupport </p>
+				</iframe>
+			</div>
+		</div>
+		<!--div></div-->	
+		<div id="div_popupChangeTxName" class="popupChangeName">
+			<div class="scroll-wrapper" style="width:100%; height:795px; -webkit-overflow-scrolling:touch; overflow-y:scroll;" >
+				<iframe onload="" src="popupChangeTxName.html" id="myIframe_changeTxName" name="myIframe_right" width="100%" height="100%" frameborder="0" type="text/html" scrolling="yes" seamless >
+					<p>Your browser is unsupport </p>
+				</iframe>
+			</div>
+		</div>
+		<!--div></div-->
+		<div id="div_popupChangeRxName" class="popupChangeName">
+			<div class="scroll-wrapper" style="width:100%; height:795px; -webkit-overflow-scrolling:touch; overflow-y:scroll;" >
+				<iframe onload="" src="popupChangeRxName.html" id="myIframe_changeRxName" name="myIframe_right" width="100%" height="100%" frameborder="0" type="text/html" scrolling="yes" seamless >
+					<p>Your browser is unsupport </p>
+				</iframe>
+			</div>
+		</div>
+		<!--div></div-->
+		<div id="div_popupTxSelectButton">
+			<div class="scroll-wrapper" style="width:100%; height:795px; -webkit-overflow-scrolling:touch; overflow:scroll;" >
+				<iframe onload="" src="popupTxSelectButton.html" id="myIframe_selectTxButton" name="myIframe_right" width="100%" height="100%" frameborder="0" type="text/html" scrolling="yes" seamless >
+					<p>Your browser is unsupport </p>
+				</iframe>
+			</div>
+		</div>	
+
+		<hr />
+		<!--input id="lineHor" type="width:100%; height:10px; background-color:white; display:block;"/-->
+		<div type="background-color:#262626;">
+			<div class="div_rename">
+				<input type="button" id="RENAME" value="RENAME" onclick="RenameOnclick();"/>
+			</div>
+			
+			<div class="div_info">
+				<input type="button" id="INFO" value="INFO" onclick="displayInfoOnclick();"/>
+			</div>
+		</div>
+		
+	</main>
+</body>
+
+</html>
+

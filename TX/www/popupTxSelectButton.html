@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<!--html xmlns="http://www.w3.org/1999/xhtml"-->
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+
+<head>
+
+ <script type="text/javascript" src="Js/jquery-1.4.1.min.js"></script>
+ <script type="text/javascript" src="Js/platform.js"></script>
+ <script type="text/javascript" src="Js/ajaxfileupload.js"></script>
+ <script type="text/javascript" src="Js/main.js"></script>
+
+<style>
+	
+html{
+	margin:0;
+	padding:0;
+	/*min-width: 450px; /*页面最小宽度*/
+	/*max-width: 720px; /*页面最大宽度*/
+}
+
+body{
+	width: auto; /*body部分占整个HTML的大小*/
+	margin:0 auto; 
+	/*min-width: 450px; /*页面最小宽度*/
+	/*max-width: 720px; /*页面最大宽度*/
+	background-color:#262626;
+	padding:0;
+}
+
+
+div{
+	text-align:center;
+}
+
+.div{
+	overflow:auto;
+}
+
+.div_mode-text{
+	height:35px;
+
+}
+
+.TxSelectButton{
+	height: 100px;
+	width: 100%;
+	background-color:#4d4d4d;
+	color: white;
+	border-color:#080808; /*边框颜色*/
+	font-size: 1.1rem;
+	-webkit-appearance : none ;  /*解决iphone safari上的圆角问题*/
+}
+
+</style>
+
+<script type="text/html" id="SelectTxButtonTag">
+  <div class="div_button">
+	<div id="divBlock{{num}}" class="div">
+		<input id="TX{{num}}" class="TxSelectButton" type="button" value="SOURCE-{{num}}" onclick="onclickSelectTxApply('{{num}}');">
+	</div>
+  </div>
+</script>
+
+
+<script>
+function LoopButton()
+{
+	for (var i=0; i<24; i++)
+	{
+		var tiganStr = $("#SelectTxButtonTag").html();
+		tiganStr = delHtmlTags(tiganStr, "{{num}}", num1[i]);
+		$(".SelectTxButton").append(tiganStr);
+	}
+}
+
+function delHtmlTags(str, reallyDo, replaceWith)
+{
+	var e = new RegExp(reallyDo, "g");
+	words = str.replace(e, replaceWith);
+
+	return words;
+}
+
+
+function onclickSelectTxApply(number)
+{
+	var value = window.parent.document.getElementById("myIframe_left").contentWindow.selectButtonValue;
+	var selectButtonId = "button"+value;
+	var TxId = "TX"+number;
+	var TxName = document.getElementById(TxId).value;
+	var TxTmp;
+	var ret;
+	var name;
+	var myIframeLeft = window.parent.document.getElementById("myIframe_left").contentWindow;
+	//console.log(selectButtonId);
+	//var page = window.parent.currentLeftPageNum;
+	//console.log(page);
+	ret = changeMulticast(number, value);
+	if (1 == ret)
+	{
+		name = TxName;
+		//console.log(name);
+		myIframeLeft.document.getElementById(selectButtonId).value = name;
+		myIframeLeft.document.getElementById(selectButtonId).style.backgroundColor="#4d4d4d";
+		
+		//window.parent.document.getElementById("div_popupTxSelectButton").style.visibility="hidden";
+		//alert(ButtonId);
+		/*
+		for (var i=0; i<128; i++)
+		{
+			selectButtonId = "button"+num[i];
+			//window.parent.document.getElementById("myIframe_left").contentWindow.document.getElementById(selectButtonId).removeAttribute("disabled");
+		}
+		*/
+		window.parent.document.getElementById("div_popupTxSelectButton").style.visibility="hidden";
+		myIframeLeft.tmp = 1;
+		for (var i=0; i<24; i++)
+		{
+			TxTmp = "TX"+num1[i];	
+			document.getElementById(TxTmp).style.backgroundColor = "#4d4d4d";
+		}
+	}
+	else
+	{
+		for (var i=0; i<24; i++)
+		{
+			TxTmp = "TX"+num1[i];
+			if (TxTmp == TxId)
+			{
+				document.getElementById(TxTmp).style.backgroundColor = "red";
+			}
+			else
+			{
+				document.getElementById(TxTmp).style.backgroundColor = "#4d4d4d";
+			}
+			
+		}
+	}
+	
+	//alert(TxName);
+	//alert(selectButtonId);
+}
+
+</script>
+ 
+</head>
+<!--body class="body-button" onload="SetRxRename();-->
+<body class="" onload="TxButtonNameInit();">
+	<div class="SelectTxButton">
+		<script>
+			LoopButton();
+		</script>		
+		<!--input id="TX{{num}}" class="TxSelectButton" type="button" value="SOURCE-{{num}}:" onclick="onclickSelectTxApply('1');"-->
+	</div>
+</body>
+</html>

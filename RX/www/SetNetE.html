@@ -1,0 +1,394 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta HTTP-EQUIV="expires" CONTENT="0">
+<HEAD>
+<META content="text/html; charset=utf-8" http-equiv="Content-Type">
+<TITLE>Network settings-HD Encoder</TITLE>
+<link type="text/css" rel="stylesheet" href="css/form.css"/>
+<LINK rel="stylesheet" type="text/css" href="css/main.css">
+<script src="Js/jquery-1.4.1.min.js" type="text/javascript"></script>
+<script src="Js/platform.js" type="text/javascript"></script>
+<script type="text/javascript">   
+var hostip =window.location.host;
+function GetIpAjax() 
+{
+	var menu_html = showMenuE("SetNetE.html");
+   	$("#menu_bar").html(menu_html);
+	
+	$.ajax
+	({ 
+	   	type:"GET",
+	   	url:"http://"+hostip+"/cgi-bin/get_net.cgi",
+       	dataType:"xml",
+	   	cache:false,
+		success:function(data)
+		{		   
+	   		var IpTxt= $(data).find("set").children("ip").text();	 
+	   		var MaskTxt=$(data).find("set").children("mask").text();
+	   		var GatewayTxt=$(data).find("set").children("gateway").text();
+	   		var MulticastTxt=$(data).find("set").children("multicast").text();
+	   		var dhcp=$(data).find("set").children("dhcp").text();
+	   		var wifi_exist=$(data).find("set").children("wifi_exist").text();	
+	   		var wifi_ip=$(data).find("set").children("wifi_ip").text();	
+	   		var wifi_netmask=$(data).find("set").children("wifi_mask").text();	
+	   		var wifi_gateway=$(data).find("set").children("wifi_gateway").text();
+	   		var wifi_type=$(data).find("set").children("wifi_type").text();
+	   		var wifi_essid=$(data).find("set").children("wifi_essid").text();
+	   		var wifi_psk=$(data).find("set").children("wifi_psk").text();
+			var wifi_status=$(data).find("set").children("wifi_status").text();
+			var wifi_enable=$(data).find("set").children("wifi_enable").text();
+	        var rtmp_type=$(data).find("set").children("rtmp_type").text();
+	        
+	   		$("#IpTxt").attr("value",IpTxt);
+	   		$("#MaskTxt").attr("value",MaskTxt);
+	   		$("#GatewayTxt").attr("value",GatewayTxt);
+	   		$("#MulticastTxt").attr("value",MulticastTxt);
+	   		$("#dhcpSle").attr("value",dhcp);
+	   		$("#wifi_exist").attr("value",wifi_exist);
+	   		$("#wifi_enable").attr("value",wifi_enable);
+	   		$("#rtmp_type").attr("value",rtmp_type);
+	  
+
+			if(wifi_status==0)
+			{
+				$("#wifi_status").attr("value", "Not conneted");
+			}
+			else
+			{
+				$("#wifi_status").attr("value", "Conneted");
+			}
+			
+			
+			$("#wifi_ip").attr("value",wifi_ip); 
+	    	$("#wifi_netmask").attr("value",wifi_netmask); 
+			$("#wifi_gateway").attr("value",wifi_gateway); 
+			$("#wifi_type").attr("value",wifi_type); 
+			$("#wifi_essid").attr("value",wifi_essid);
+			$("#wifi_psk").attr("value",wifi_psk);  
+	 	}
+	});
+}
+	
+	
+function SetIpAjax(){
+	var wifi_exist=$("#wifi_exist").val();
+	
+	var validated=IsValidate(0);
+	if(validated==true){
+	/*
+	   var IpTxt=$("#IpTxt").val();
+       var MaskTxt=$("#MaskTxt").val();
+       var GatewayTxt=$("#GatewayTxt").val();
+	   var dhcpSle=$("#dhcpSle").val();	   
+	   var wifi_ip=$("#wifi_ip").val();
+	   var wifi_netmask=$("#wifi_netmask").val();
+	   var wifi_gateway=$("#wifi_gateway").val();
+	   var wifi_type=$("#wifi_type").val();
+	   var wifi_essid=$("#wifi_essid").val();
+	   var wifi_psk=$("#wifi_psk").val();
+	   var net_type=$("#net_type").val();
+	   var urlstr="";
+    */
+       var RTMPType=$("#rtmp_type").val();
+	   var RTSPType=$("#rtsp_type").val();
+	   var IpTxt=$("#IpTxt").val();
+       var MaskTxt=$("#MaskTxt").val();
+       var GatewayTxt=$("#GatewayTxt").val();
+       var MulticastTxt=$("#MulticastTxt").val();
+	   var wifi_dhcp=$("#wifi_dhcp").val();	  
+	   var wifi_enable=$("#wifi_enable").val();		    
+	   var wifi_ip=$("#wifi_ip").val();
+	   var wifi_netmask=$("#wifi_netmask").val();
+	   var wifi_gateway=$("#wifi_gateway").val();
+	   var wifi_type=$("#wifi_type").val();
+	   var wifi_essid=$("#wifi_essid").val();
+	   var wifi_psk=$("#wifi_psk").val();
+	   var urlstr="";
+
+		//urlstr="http://"+hostip+"/cgi-bin/set_net.cgi?rtmp_type="+RTMPType+"&rtsp_type="+RTSPType+"&ip="+IpTxt+"&mask="+MaskTxt+"&gateway="+GatewayTxt+"&wifi_dhcp="+wifi_dhcp+"&wifi_ip="+wifi_ip+"&wifi_mask="+wifi_netmask+"&wifi_gateway="+wifi_gateway+"&wifi_type="+wifi_type+"&wifi_essid="+wifi_essid+"&wifi_psk="+wifi_psk+"&wifi_enable="+wifi_enable;
+	    urlstr="http://"+hostip+"/cgi-bin/set_net.cgi?rtmp_type="+RTMPType+"&rtsp_type="+RTSPType+"&ip="+IpTxt+"&mask="+MaskTxt+"&gateway="+GatewayTxt+"&multicast="+MulticastTxt+"&wifi_dhcp="+wifi_dhcp+"&wifi_ip="+wifi_ip+"&wifi_mask="+wifi_netmask+"&wifi_gateway="+wifi_gateway+"&wifi_type="+wifi_type+"&wifi_essid="+wifi_essid+"&wifi_psk="+wifi_psk+"&wifi_enable="+wifi_enable;
+
+		$.ajax({ 
+			type:"GET",
+	        url:urlstr,
+            dataType:"text",
+	        cache:false,
+            success:function(data){
+				if(data=="succeed"){
+					//alert('Set successfully, please reboot your device！');
+					alert('Set successfully ！');
+				}else{
+					alert('Failed to set！');
+				}
+	        }
+		});
+	}
+}
+	
+function IsValidate(wifi_exist) {
+	var validated=true;
+	var IpTxt=$("#IpTxt").val();
+	var MaskTxt=$("#MaskTxt").val();
+	var GatewayTxt=$("#GatewayTxt").val();
+  var MulticastTxt=$("#MulticastTxt").val();
+	var wifi_ip=$("#wifi_ip").val(); 
+	var wifi_netmask=$("#wifi_netmask").val();
+	var wifi_gateway=$("#wifi_gateway").val();
+	var wifi_type=$("#wifi_type").val();
+	var wifi_essid=$("#wifi_essid").val();
+	var wifi_psk=$("#wifi_psk").val();
+	if(wifi_exist==0) {
+        if(IpTxt=="" || MaskTxt=="" || GatewayTxt==""){
+			alert('Set the content cannot be empty！');
+			validated=false;
+		}else if(!checkIp(IpTxt)){
+			alert('IP format is not correct！');
+			validated=false;
+		}else if(!checkIp(MaskTxt)){
+			alert('Netmask format is not correct！');
+			validated=false;
+		}else if(!checkIp(GatewayTxt)){
+			alert('Gateway format is not correct！');
+			validated=false;
+		}else if (!checkIp(MulticastTxt)){
+            alert('Multicast format is not correct！');
+            validated = false;
+        }
+	}else{
+	     if(IpTxt=="" || MaskTxt=="" || GatewayTxt=="" || MulticastTxt=="" || wifi_ip=="" || wifi_netmask=="" || wifi_gateway==""){
+			alert('Set the content cannot be empty！');
+			validated=false;
+	    }else if(!checkIp(IpTxt)){
+			alert('IP format is not correct！');
+			validated=false;
+		}else if(!checkIp(MaskTxt)){
+			alert('Netmask format is not correct！');
+			validated=false;
+		}else if(!checkIp(GatewayTxt)){
+			alert('Gateway format is not correct！');
+			validated=false;
+		}else if(!checkIp(MulticastTxt)){
+			alert('Multicast format is not correct !');
+			validated=false;
+		}else if(!checkIp(wifi_ip)){
+			alert('Wifi IP format is not correct！');
+			validated=false;
+		}else if(!checkIp(wifi_netmask)){
+			alert('Wifi Netmask format is not correct！');
+			validated=false;
+		}else if(!checkIp(wifi_gateway)){
+			alert('Wifi Gateway format is not correct！');
+			validated=false;
+	   }
+	}
+	return validated;
+}
+	
+function checkIp(str){			
+	var ss=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+	return ss.test(str);	
+}
+
+function CheckMac(str)
+{
+    var reg_name=/^[a-fA-F\d]{2}:[a-fA-F\d]{2}:[a-fA-F\d]{2}:[a-fA-F\d]{2}:[a-fA-F\d]{2}:[a-fA-F\d]{2}$/;
+    return reg_name.test(str); 
+}
+
+function changeLan(){
+	var Language=$("#LanSle").val();
+	if(Language=='Chinese'){
+		$.ajax({ 
+			type:"GET",
+			url: "http://" + hostip + "/cgi-bin/set_sys.cgi?type=lang&lang=0",
+			dataType:"text",
+			cache:false
+	    });
+		window.location.href='SetNet.html';
+	 }
+}
+</script>
+<META name="GENERATOR" content="MSHTML 9.00.8112.16457">
+</HEAD>
+<BODY onload="GetIpAjax();">
+<form onsubmit="return validator(this);" name="aspnetForm" id="aspnetForm">
+ <div class="header">
+  <div class="header_b"> <a href="/" class="logo"><img src="css/en/logo.jpg" /></a>
+   <p class="logo_v"> RX HD Encoder </p>
+   <div class="language">
+    <select onchange="changeLan()" id='LanSle'>
+     <option value="Chinese">Chinese</option>
+     <option value="English" selected="selected">English</option>
+    </select>
+   </div>
+   <ul>
+    <li><a href="http://www.baidu.com/" target="_blank">Service and Support</a></li>
+   </ul>
+  </div>
+</div>
+ <dd id="menu_bar"></dd>
+ <DIV class="clear"></DIV>
+ <DIV class="wrapper">
+  <h1 class="h1_SetNetE">SetNet</h1>
+  <DIV class="content" style="display:none;">
+   <DIV class="in author t_index_1">
+    <H2>Connection settings</H2>
+   </DIV>
+   <DIV class="check_main"> </DIV>
+   <!-- Form -->
+   <DIV class="in">
+    <div id='test'></div>
+    <div class="write">
+	 <dl>
+      <!--<dt>RTMP Connection:</dt>-->
+      <dd>
+       <select style="display:none;" id="rtmp_type" name="rtmp_type">
+        <option  value="1" selected ="selected">Ethernet</option>
+        <option  value="2" >WIFI</option>
+       </select>
+      </dd>
+     </dl>
+	 <dl>
+      <dt>RTSP Connection:</dt>
+      <dd>
+       <select id="rtsp_type" name="rtsp_type">
+        <option  value="1" selected ="selected">Ethernet</option>
+        <option  value="2" >WIFI</option>
+       </select>
+      </dd>
+     </dl>
+
+ </div>
+</DIV>
+</DIV>
+  <DIV class="content">
+   <DIV class="in author t_index_1">
+    <H2>Ethernet settings</H2>
+   </DIV>
+   <DIV class="check_main"> </DIV>
+   <!-- Form -->
+   <DIV class="in">
+    <div id='test'></div>
+    <div class="write">
+     <dl>
+      <dt>IP：</dt>
+      <dd>
+       <input  id="IpTxt" disabled="disalbed" name="IpTxt" valid="required"  maxlength="18"  type="text" />
+      </dd>
+     </dl>
+     <dl>
+      <dt>Netmask：</dt>
+      <dd>
+       <input id="MaskTxt" disabled="disalbed" name="MaskTxt"  valid="required"  maxlength="18"   type ="text"/>
+      </dd>
+     </dl>
+     <dl>
+      <dt>Gateway：</dt>
+      <dd>
+       <input id="GatewayTxt" disabled="disalbed" name="GatewayTxt"  valid="required"  maxlength="18"   type ="text"/>
+      </dd>
+     </dl>
+     <dl>
+      <dt>Multicast IP：</dt>
+      <dd>
+       <input id="MulticastTxt" disabled="disalbed" name="MulticastTxt"  valid="required"  maxlength="18"   type ="text"/>
+      </dd>
+     </dl>
+     <dl>
+       <dt>&nbsp;</dt>
+        <dd>
+         <input type="button" value="Apply" name ="insert" class="com_btn_E b_shezhiE" onclick="SetIpAjax()"  id="subBut" />
+       </dd>
+     </dl>
+ </div>
+</DIV>
+</DIV>
+
+  <!--DIV class="content">
+   <DIV class="in author t_index_1">
+    <H2>WIFI settings</H2>
+   </DIV>
+   <DIV class="check_main"> </DIV>
+   <DIV class="in">
+    <div id='test'></div>
+    <div class="write">
+     <div id="wifi1">
+     <dl>
+      <dt>WiFi：</dt>
+      <dd>
+       <select id="wifi_enable" disabled="disalbed" name="wifi_enable">
+        <option  value="1" >ON</option>
+        <option  value="0" selected ="selected">OFF</option>
+       </select>
+      </dd>
+     </dl>
+	  <dl>
+       <dt>Wifi Status:</dt>
+       <dd>
+	    <input name="wifi_status" disabled="disalbed" value ="" readonly = "true" type="text" maxlength="32" id="wifi_status">
+       </dd>
+      </dl>
+     <dl>
+      <dt>DHCP：</dt>
+      <dd>
+       <select id="wifi_dhcp" name="wifi_dhcp">
+        <option  value="1" selected ="selected">Enable</option>
+       </select>
+      </dd>
+     </dl>
+      <dl>
+       <dt>Wifi IP：</dt>
+       <dd>
+        <input  id="wifi_ip" name="wifi_ip" disabled="disalbed" valid="required"  maxlength="18"  type="text" />
+       </dd>
+      </dl>
+      <dl>
+       <dt>Wifi Netmask：</dt>
+       <dd>
+        <input id="wifi_netmask" name="wifi_netmask" disabled="disalbed" valid="required"  maxlength="18"   type ="text"/>
+       </dd>
+      </dl>
+      <dl>
+       <dt>Wifi Gateway：</dt>
+       <dd>
+        <input id="wifi_gateway" name="wifi_gateway" disabled="disalbed" valid="required"  maxlength="18"   type ="text"/>
+       </dd>
+      </dl>
+      <input id="wifi_exist" name="wifi_exist"   type="hidden" />
+      <dl>
+       <dt>Wifi Encryption：</dt>
+       <dd>
+        <select id="wifi_type" name="wifi_type"  style="width:100px;">
+         <option  value="0" selected ="selected">None</option>
+         <option  value="1" >WPA/WPA2</option>
+        </select>
+       </dd>
+      </dl>
+      <dl>
+       <dt>Wifi Essid：</dt>
+       <dd>
+        <input id="wifi_essid" name="wifi_essid" valid="required" maxlength="30" type ="text"/>
+       </dd>
+      </dl>
+      <dl>
+       <dt>Wifi Password：</dt>
+       <dd>
+        <input id="wifi_psk" name="wifi_psk" valid="required" maxlength="30" type ="text"/>
+       </dd>
+      </dl>
+     </div>
+     <dl>
+      <dt>&nbsp;</dt>
+      <dd>
+       <input type="button" value="Apply" name ="insert" class="com_btn_E b_shezhiE" onclick="SetIpAjax()"  id="subBut" />
+      </dd>
+     </dl>
+    </div>
+   </DIV-->
+  </DIV>
+ </DIV>
+</form>
+</BODY>
+</HTML>
