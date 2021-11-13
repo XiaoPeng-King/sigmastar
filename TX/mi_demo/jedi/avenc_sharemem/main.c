@@ -2177,7 +2177,7 @@ int main(int argc, char **argv)
     //venc configure 
     venc_start_chn(ctx.conf);
     vpe_bind_venc();
-
+#if 1
     CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
     // get es stream
     CreateThread(&ctx.conf->pt_output, NULL, (void*)venc_output_thread, (void *)ctx.conf);
@@ -2186,8 +2186,8 @@ int main(int argc, char **argv)
     CreateThread(&rtp_sned_handle, NULL, (void*)send_rtp_tx, NULL);
     CreateThread(&control_handle, NULL, (void*)control_slave, NULL);
     //CreateThread(&backup_handle, NULL, (void*)backup_host, NULL);
-    //CreateThread(&gpio_handle, NULL, (void*)gpio_main, NULL);
-    
+    CreateThread(&gpio_handle, NULL, (void*)gpio_main, NULL);
+#endif
     while (g_Exit) //thread 0
     {
         sleep(1);

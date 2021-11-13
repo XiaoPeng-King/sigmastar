@@ -22,8 +22,9 @@
 //#define CONFIG_FILE ("/tmp/configs/config.conf")
 
 #define CONFIG_FILE ("./config.conf")
+#define CONFIG_EEPROM
 
-//extern char g_Is_E2prom;
+extern char g_Is_E2prom;
 
 #if 1
 static int get_random(void)
@@ -119,7 +120,7 @@ int AppInitCfgInfoFromFile(int *fp)
 int AppWriteCfgInfotoFile(void)
 {
     printf("\n-------AppWriteCfgInfotoFile----------\n");
-#if 0
+#ifdef CONFIG_EEPROM
     if (1 == g_Is_E2prom)
     {
         WriteConfigIntoE2prom(share_mem);

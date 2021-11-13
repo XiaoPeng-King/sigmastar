@@ -5,5 +5,5 @@
 #include "sharemem.h"
 
 int init_eth(void);
-
+void *switch_ip(void);
 #endif

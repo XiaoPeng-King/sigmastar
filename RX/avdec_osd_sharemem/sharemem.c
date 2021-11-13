@@ -5,6 +5,9 @@
 //#include "EEPROM.h"
 //#include "app_rx_io_ctl.h"
 
+
+#define CONFIG_EEPROM
+
 char web_flag;
 
 char g_Is_E2prom;

@@ -28,6 +28,8 @@
 #include "mi_ao_datatype.h"
 #include "app_rtp.h"
 
+#include "gpio.h"
+#include "uart.h"
 #include "watchdog.h"
 #include "sstardisp.h"
 #include "app_osd.h"
@@ -35,6 +37,7 @@
 #include "sharemem.h"
 #include "app_rx_broadcast.h"
 #include "app_igmp.h"
+#include "init_net.h"
 
 #define STCHECKRESULT(result)\
     if (result != MI_SUCCESS)\
@@ -875,15 +878,18 @@ static int set_parameter(void)
 
 static int init_system(void)
 {
+    init_gpio();
+    InitShareMem();
     sstar_vdec_init(); //vdec init   
     sstar_ao_init(); //
-    InitShareMem();
     init_eth();
 }
 
 int main (int argc, char **argv)
 {
     pthread_t watchdog_handle;
+    pthread_t switch_ip_handle;
+    pthread_t uart_watchdog_handle;
     pthread_t rtp_main_handle;
     pthread_t sharemem_main_handle;//
     pthread_t IP_broadcast_recive_handle;
@@ -906,6 +912,8 @@ int main (int argc, char **argv)
     logo_display();
 
     CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
+    CreateThread(&switch_ip_handle, NULL, switch_ip, NULL);
+    CreateThread(&uart_watchdog_handle, NULL, uart_main, NULL);
     CreateThread(&sharemem_main_handle, NULL, sharemem_handle, NULL);
     CreateThread(&rtp_main_handle, NULL, app_rtp_main, NULL);
     CreateThread(&IP_broadcast_recive_handle, NULL, IP_broadcast_recive, NULL);
@@ -919,6 +927,7 @@ int main (int argc, char **argv)
     while (1)
     {
         sleep(1);
+        printf("key : %d \n", get_key_value());
     }
 
     pthread_join(sharemem_main_handle, NULL);
