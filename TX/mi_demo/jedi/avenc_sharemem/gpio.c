@@ -12,6 +12,13 @@
 #define SW_IP_SET_IN 0x100003
 #define SW_IP_SET_OUT 0x100004
 
+#define SW_1    4 //GPIO_4
+#define SW_2    3 //GPIO_3
+#define SW_3    6 //GPIO_6
+#define SW_4    5 //GPIO_5
+#define SW_5    9 //GPIO_9
+
+
 typedef enum
 {
 	SW_GPIO_2 = 2,
@@ -20,6 +27,7 @@ typedef enum
     SW_GPIO_5,
     SW_GPIO_6,
     SW_GPIO_7,
+    SW_GPIO_9 = 9,
     SW_PM_GPIO_0=62,
     SW_PM_GPIO_1=63,
     SW_PM_GPIO_3=65,
@@ -37,13 +45,13 @@ static char get_gpio_value(const unsigned char gpio)
     char value = -1;
     int fd_gpio = -1;
     reg_cmd_t gpio_info;
-
-    if((gpio > 7 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
+#if 1
+    if((gpio > 9 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
     {
         printf("get gpio error ,gpio is <2-7/62/63/65/69> \n");
         return -1;
     }
-
+#endif
     fd_gpio = open("/dev/SW_IP", O_RDWR);
     if (fd_gpio < 0)
     {
@@ -72,7 +80,7 @@ static int set_gpio_value(const unsigned char gpio, unsigned char value)
     int fd_gpio = -1;
     reg_cmd_t gpio_info;
 
-     if((gpio > 7 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
+     if((gpio > 9 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
     {
         printf("get gpio error ,gpio is <2-7/62/63/65/69> \n");
         return -1;
@@ -224,23 +232,51 @@ int main(int argc,char* argv[])
 }
 #endif
 
-void* gpio_main(void)
+
+static char detect_sw_id(void)
 {
-    int value = 0;
-    while (g_Exit)
+	char id = 0;
+	char flag = 0;
+
+    flag = get_gpio_value(SW_5);
+	id = (id | (flag << 0));
+
+	flag = get_gpio_value(SW_4);
+	id = (id | (flag << 1));
+
+	flag = get_gpio_value(SW_3);
+	id = (id | (flag << 2));
+
+	flag = get_gpio_value(SW_2);
+	id = (id | (flag << 3));
+
+	flag = get_gpio_value(SW_1);
+	id = (id | (flag << 4));
+
+	//printf("detect sw id : 0x%x \n", id);
+
+	return id;
+}
+
+unsigned char IP_check(void)
+{
+    int ip = 0, temp = -1;
+
+    while (1)
     {
-        value = get_gpio_value(SW_GPIO_2);
-        sleep(1);
-        if (value = 1)
+        ip = detect_sw_id();
+        if (ip != temp)
         {
-            set_gpio_value(SW_GPIO_2, 0);
+            temp = ip;
         }
         else
         {
-            set_gpio_value(SW_GPIO_2, 1);
+            sleep(1);
+            printf("ip : %d \n", ip);
+            break;
         }
-        
     }
+    return ip+201;
 }
 
 

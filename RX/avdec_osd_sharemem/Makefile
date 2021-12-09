@@ -12,7 +12,7 @@ C_FLAGS	   = $(COM_FLAGS) #-std=c11
 
 INCLUDES  += -I. -I./sstar/include -I./osd_lib/inc -I./common 
 
-TARGET_NAME  = main
+TARGET_NAME  = main_rx
 
 C_SRCS    =  $(wildcard *.c) common/verify_gfx.c common/blitutil.c #sstardisp.c main.c app_rtp.c
 C_OBJS = $(patsubst %.c, %.o, $(C_SRCS))#main.o sstardisp.o app_rtp.o

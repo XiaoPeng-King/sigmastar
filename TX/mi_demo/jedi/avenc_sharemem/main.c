@@ -37,6 +37,8 @@
 #include "app_tx_broadcast.h"
 #include "app_hot_backup.h"
 #include "gpio.h"
+#include "uart_watchdog.h"
+#include "hdmi_info.h"
 
 #define ASCII_COLOR_RED                          "\033[1;31m"
 #define ASCII_COLOR_WHITE                        "\033[1;37m"
@@ -56,6 +58,13 @@
 #define MAX_JSON_STR_LEN    16
 
 unsigned char g_Exit = 1;
+
+typedef enum {
+    EN_NOREMAL = 0,
+    EN_NO_SIGNAL, 
+    EN_NO_HDMI
+}SYSTEM_STATE_e;
+SYSTEM_STATE_e g_enSystem_state = EN_NOREMAL;
 
 typedef struct
 {
@@ -112,7 +121,7 @@ typedef struct
 static MI_BOOL g_bExit = FALSE;
 static MI_S32 g_skipFrame = 35;
 static MI_U32 g_frameCnt = 0;
-// static MI_S32 g_dumpFrame = 60;
+//static MI_S32 g_dumpFrame = 60;
 
 //extern unsigned int PutH264DataToBuffer(unsigned char *pFrame,unsigned int size);
 
@@ -127,9 +136,11 @@ void venc_print_help(const char *porgName)
 
 void venc_parse_options(VENC_Ctx_t *ctx)
 {
- 
-    ctx->conf[0].yuv_width = 1920; //atoi(argv[++i]);
-    ctx->conf[0].yuv_height = 1080; //atoi(argv[++i]);
+    ctx->conf[0].yuv_width = h264_append_info.width;//1920; //atoi(argv[++i]);
+    ctx->conf[0].yuv_height = h264_append_info.height;//1080; //atoi(argv[++i]);
+    printf("ctx->conf[0].yuv_width : %d \n", ctx->conf[0].yuv_width);
+    printf("ctx->conf[0].yuv_height : %d \n", ctx->conf[0].yuv_height);
+
 
     ctx->conf[0].yuv_format = 0; //atoi(argv[++i]);
 
@@ -1221,7 +1232,6 @@ int venc_check_config_chn(VENC_Ctx_t *ctx)
     return 0;
 }
 
-
 int init_venc_config(VENC_Ctx_t *ctx)
 {
     char name[MAX_JSON_STR_LEN];
@@ -1436,12 +1446,13 @@ void venc_output_thread(void *args)
 
     while (g_Exit)
     {
+        //printf("ctx->conf[0].yuv_width : %d \n", pConf->yuv_width);
+        //printf("ctx->conf[0].yuv_height : %d \n", pConf->yuv_height);
         struct timeval TimeoutVal;
         MI_VENC_ChnStat_t stStat;
         MI_VENC_Stream_t stStream;
         int i;
-        // TimeoutVal.tv_sec  = 2;
-        // TimeoutVal.tv_usec = 0;
+        #if 1
         TimeoutVal.tv_sec  = 0;
         TimeoutVal.tv_usec = 200*1000;
         FD_ZERO(&read_fds);
@@ -1460,6 +1471,7 @@ void venc_output_thread(void *args)
             continue;
         }
         else
+        #endif
         {
             if (FD_ISSET(vencFd, &read_fds))
             {
@@ -1497,6 +1509,8 @@ void venc_output_thread(void *args)
                     {
                         //write(fd, stStream.pstPack[i].pu8Addr + stStream.pstPack[i].u32Offset,stStream.pstPack[i].u32Len - stStream.pstPack[i].u32Offset);
                         PutH264DataToBuffer((stStream.pstPack[i].pu8Addr + stStream.pstPack[i].u32Offset), (stStream.pstPack[i].u32Len - stStream.pstPack[i].u32Offset), stStream.pstPack[i].stDataType.eH264EType);
+                        printf("0");
+                        usleep(100);
                     }
 
                     MI_VENC_ReleaseStream(pConf->venc_chn, &stStream);
@@ -1810,7 +1824,8 @@ void Sensor_init()
     MI_U32 u32ResCount =0;
     MI_U8 u8ResIndex =0;
     MI_SNR_Res_t stRes;
-    ret=MI_SNR_SetPlaneMode((MI_SNR_PAD_ID_e)id, FALSE);
+
+    ret=MI_SNR_SetPlaneMode((MI_SNR_PAD_ID_e)id, FALSE); //HDR off
     if(ret !=0 )
     {
         printf("MI_SNR_SetPlaneMode is failed!!\n");
@@ -2126,18 +2141,33 @@ void vpe_bind_venc()
 }
 extern int audio_thread();
 
+static void init_pre_venc(void)
+{
+    Vif_init(); //
+    vpe_init(); //
+    vif_bind_vpe();
+}
 
 static int init_system(void)
 {
-    Sensor_init();
-    RingInit(); //video ring buffer init
-    InitShareMem();
     ExecFunc(MI_SYS_Init(), MI_SUCCESS);
+    Sensor_init();
+
+    RingInit(); //video ring buffer init
+    
+    InitShareMem();
+     
     init_eth();
-    update_init_info();
-    Vif_init();
-    vpe_init();
-    vif_bind_vpe();
+
+    init_pre_venc();
+}
+
+
+
+static deinit_pre_venc()
+{
+    Vif_deinit();
+    vpe_deinit();
 }
 
 
@@ -2145,6 +2175,7 @@ static int init_system(void)
 int main(int argc, char **argv)
 {
     pthread_t watchdog_handle = 0;
+    pthread_t uart_watchdog_handle = 0;
     pthread_t rtp_sned_handle = 0;
     pthread_t audio_thread_handle = 0;
     pthread_t sharemem_handle = 0;
@@ -2152,14 +2183,16 @@ int main(int argc, char **argv)
     pthread_t backup_handle = 0;
     pthread_t gpio_handle = 0;
 
-    VENC_Ctx_t ctx;
+    VENC_Ctx_t ctx; //
     memset(&ctx, 0, sizeof(VENC_Ctx_t));
+    init_info();
+
     venc_parse_options(&ctx);
 
     struct sigaction sigAction;
     char szCmd[16];
 
-    #if 1
+    #if 0
     sigAction.sa_handler = venc_handle_sig;
     sigemptyset(&sigAction.sa_mask);
     sigAction.sa_flags = 0;
@@ -2170,27 +2203,48 @@ int main(int argc, char **argv)
     {
         return -1;
     }
-   
+    
     init_system();
     init_venc_config(&ctx);
 
     //venc configure 
     venc_start_chn(ctx.conf);
     vpe_bind_venc();
+
 #if 1
-    CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
+    //CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
+    //CreateThread(&uart_watchdog_handle, NULL, uart_main, NULL);
+    
     // get es stream
     CreateThread(&ctx.conf->pt_output, NULL, (void*)venc_output_thread, (void *)ctx.conf);
-    CreateThread(&audio_thread_handle, NULL, (void*)audio_thread, NULL);
-    CreateThread(&sharemem_handle, NULL, (void*)sharemem_main, NULL);
     CreateThread(&rtp_sned_handle, NULL, (void*)send_rtp_tx, NULL);
-    CreateThread(&control_handle, NULL, (void*)control_slave, NULL);
+    //CreateThread(&audio_thread_handle, NULL, (void*)audio_thread, NULL);
+    //CreateThread(&sharemem_handle, NULL, (void*)sharemem_main, NULL);
+    
+    //CreateThread(&control_handle, NULL, (void*)control_slave, NULL);
     //CreateThread(&backup_handle, NULL, (void*)backup_host, NULL);
-    CreateThread(&gpio_handle, NULL, (void*)gpio_main, NULL);
+
 #endif
+    int ret = -1;
     while (g_Exit) //thread 0
     {
         sleep(1);
+        ret = check_hdmi_signal(&h264_append_info);
+        if (1 == ret)
+        {   
+            venc_parse_options(&ctx);
+            deinit_pre_venc();
+            init_pre_venc();
+
+            init_venc_config(&ctx);
+
+            //venc configure 
+            venc_start_chn(ctx.conf);
+            vpe_bind_venc();
+        }
+
+        
+        //printf("\n\n");
     }
 
     pthread_join(sharemem_handle, NULL);

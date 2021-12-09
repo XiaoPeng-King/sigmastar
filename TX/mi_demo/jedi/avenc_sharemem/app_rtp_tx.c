@@ -22,6 +22,10 @@
 //#include "ring_buffer.h"
 #include "crc.h"
 #include "sharemem.h"
+#include "hdmi_info.h"
+
+#define NO_SIGNAL	"check hdmi signal"
+#define CANT_SUPPORT 	"can't support the signal"
 
 //#define OUTPUT_H264
 //#define OUTPUT_PCM
@@ -67,7 +71,7 @@ size_t WritePCMToFile(const void *ptr, size_t size, size_t nmemb,
 void *send_rtp_tx(void)
 {
 	int ret,tmp_len,len;
-	unsigned char *pCheck="0abc"; //send flag with HDMI check signal
+	char pCheck[30] = {}; //send flag with HDMI check signal
 	unsigned char *pBuf = (unsigned char*)malloc(sizeof(unsigned char)*BUFFER_SIZE);
 	unsigned char *dst;
 	unsigned char *pStream;
@@ -76,6 +80,7 @@ void *send_rtp_tx(void)
 	int send_len=0;
 	struct timezone tz;
 	struct timeval tv1, tv2;
+	unsigned int timeOut;
 
 #ifdef OUTPUT_PCM
 	pcmfp = OpenFile("./send.pcm", "w+");
@@ -105,8 +110,8 @@ ReSocket:
 		goto ReSocket;
 	}
 
-	SetReuseSocketAddr(sock_cli);
-	SetSendTimeOut(sock_cli, 2, 0);
+	//SetReuseSocketAddr(sock_cli);
+	//SetSendTimeOut(sock_cli, 2, 0);
 
 	DataHead.iProbe = 0x1A1B1C1D;
 	DataHead.uSeq = 0;
@@ -115,32 +120,62 @@ ReSocket:
 #endif
 	while (g_Exit)
 	{
-		send_len=0;
-
-		ringbuflen = GetElementFromRing(&FrameInfo);
-        if(ringbuflen == 0)
-        {
-			//usleep(100);
-			continue ;
+		//multicast switch 
+#if 0
+		//Check HDMI signal 
+		char hdmi_state = check_hdmi();
+		if (0 < hdmi_state)
+		{
+			timeOut++;
+			bzero(pCheck, sizeof(pCheck));
+			if (-1 == hdmi_state)
+			{
+				memcpy(pCheck, NO_SIGNAL, sizeof(pCheck));
+				printf(NO_SIGNAL);
+			}
+			else if (2 == hdmi_state)
+			{
+				memcpy(pCheck, CANT_SUPPORT, sizeof(pCheck));
+				printf(CANT_SUPPORT);
+			}
+			SendToDestAddr(sock_cli, pCheck, sizeof(pCheck), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+			
+			sleep(1);
+			if (timeOut > 3000)
+			{
+				//reboot1();
+			}
+			continue;
 		}
-#if 1
 		else
 		{
-			#if 1
+			timeOut = 0;
+		}
+#endif
+	
+#if 1
+		send_len=0;
+
+		if (GetAllNumOfElements() > 0)
+		{
+			#if 0
 			ret = gettimeofday(&tv1,&tz);
 			if (ret < 0){
 				printf("printf_log gettimeofday error \n");
 				perror("gettimeofday");
 			}
-			#endif
 			
 			DataHead.uSeq += 1;
 			DataHead.iTimeStamp = tv1.tv_sec-144221050; 
 			//printf("time %u:%u\n",tv1.tv_sec,tv1.tv_usec);
+			#endif
 
+			GetElementFromRing(&FrameInfo);
+			printf("V");
 			if (FrameInfo.FrameType == FRAME_TYPE_I) //I frame
 			{
 				//printf("this is i frame\n");
+				printf("-I-\n\n");
 				DataHead.iLen = FrameInfo.FrameSize;
 				DataHead.uPayloadType = H264;
 				tmp_len = FrameInfo.FrameSize;
@@ -177,8 +212,9 @@ ReSocket:
 					Write264ToFile((unsigned char *)dst, tmp_len, 1, p264File);
 				}
 			}
-			else//p frame
+			else //p frame
 			{
+				printf("P");
 				//printf("this is p frame\n");
 				tmp_len = FrameInfo.FrameSize;
 				DataHead.iLen = FrameInfo.FrameSize;
@@ -215,20 +251,24 @@ ReSocket:
 					Write264ToFile((unsigned char *)dst, tmp_len, 1, p264File);				
 				}
 			}
-		}
+		} /*end video judge*/
 #endif
-		/***************Audio data****************/
+		/***************Audio data****************/		
 #if 1
 		if (RingGetByteStreamMemoryBufferCnt() > FETCH_COUNT)
 		{
+			printf("A");
 			//printf("/***************Audio data****************/\n");
+			#if 0
 			ret = gettimeofday(&tv1,&tz);
 			if (ret < 0){
 				printf("printf_log gettimeofday error \n");
 				perror("gettimeofday");
 			}
-			DataHead.uPayloadType = WAV;
 			DataHead.iTimeStamp = tv1.tv_sec-144221050;
+			#endif
+
+			DataHead.uPayloadType = WAV;
 			DataHead.iLen = FETCH_COUNT;
 			
 			RingPullFromByteStreamMemoryBuffer(pBuf, FETCH_COUNT);
@@ -251,16 +291,10 @@ ReSocket:
 			}
 			len = SendToDestAddr(sock_cli, pStream, tmp_len, 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
 			//WritePCMToFile(pStream, tmp_len, 1, pcmfp);
-		}
-		else
-		{
-			//printf("ringbuffer not full \n");
-			//usleep(100);
-		}
+		} /*end of audio judge*/
 #endif
 	} //end of while (1)
 
-	printf(" break while(1)   ,endif \n");
     close(sock_cli);
 	free(dst);
 	

@@ -11,7 +11,7 @@
 *******************************************************************/    
 int UART0_Open(int fd,char*port)
 {    
-    fd = open( port, O_RDWR|O_NOCTTY|O_NDELAY);    
+    fd = //open( port, O_RDWR|O_NOCTTY|O_NDELAY);    
 	open( port, O_RDWR|O_NDELAY);    
     if (fd<0)    
     {    

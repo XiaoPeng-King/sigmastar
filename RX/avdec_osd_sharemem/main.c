@@ -68,8 +68,6 @@
 #define AUDIO_DEV       0
 #endif
 
-
-
 #if ENABLE_HDMI
     #define VDEC_OUTPUT_WIDTH     1920
     #define VDEC_OUTPUT_HEIGHT    1080
@@ -77,6 +75,14 @@
     #define VDEC_OUTPUT_WIDTH     1024
     #define VDEC_OUTPUT_HEIGHT    600
 #endif
+
+typedef enum {
+    EN_NOREMAL = 0,
+    EN_NO_SIGNAL, 
+    EN_NO_HDMI,
+    EN_DISABLE_DISPLAY
+}SYSTEM_STATE_e;
+SYSTEM_STATE_e g_enSystem_state = EN_NOREMAL;
 
 typedef struct WAVE_FORMAT
 {
@@ -102,22 +108,21 @@ typedef struct WAVEFILEHEADER
 
 typedef struct _H264_APPEND_INFO
 {
-        //audio
-        unsigned int fs;
-        unsigned int audio_bits;
-        unsigned int chns;
-        //unsigned int audio_handle;
-        //video
-        unsigned int width;
-        unsigned int height;
-        unsigned int src_width;
-        unsigned int src_height;
-        unsigned char frameRate;
-        unsigned char refreshRate;
-        unsigned char interlace;
+    //audio
+    unsigned int fs;
+    unsigned int audio_bits;
+    unsigned int chns;
+    //unsigned int audio_handle;
+    //video
+    unsigned int width;
+    unsigned int height;
+    unsigned int src_width;
+    unsigned int src_height;
+    unsigned char frameRate;
+    unsigned char refreshRate;
+    unsigned char interlace;
 } H264_APPEND_INFO_s;
 static int VIDEO_INFO_SIZE = sizeof(H264_APPEND_INFO_s);
-
 
 static MI_S32 g_s32NeedSize;
 static MI_U32 u32DmaBufSize;
@@ -125,7 +130,6 @@ static MI_S32 s32SoundLayout;
 static MI_S32 s32SampleRate;
 static MI_BOOL bExit = FALSE;
 MI_VDEC_CodecType_e _eCodecType = E_MI_VDEC_CODEC_TYPE_H264;//E_MI_VDEC_CODEC_TYPE_H265;
-
 
 char g_multicast[20] = "239.255.42.31";
 char g_serverip[20];
@@ -919,15 +923,35 @@ int main (int argc, char **argv)
     CreateThread(&IP_broadcast_recive_handle, NULL, IP_broadcast_recive, NULL);
     CreateThread(&IP_broadcast_report_handle, NULL, IP_broadcast_report, NULL);
     CreateThread(&IGMP_report_handle, NULL, app_igmp_report, NULL);
-    osd_disable();
-    osd_display(20, 20, "searching TX");
-    sleep(3);
-    osd_disable();
+    
+    g_enSystem_state = EN_NO_HDMI;
 
     while (1)
     {
+        switch (g_enSystem_state)
+        {
+            case EN_DISABLE_DISPLAY:
+                osd_disable();
+                g_enSystem_state = EN_NOREMAL;
+                break;
+
+            case EN_NO_SIGNAL:
+                osd_display(20, 20, "Check TX's HDMI signal");
+                g_enSystem_state = EN_NOREMAL;
+                break;
+            
+            case EN_NO_HDMI:
+                osd_display(20, 20, "Check TX's HDMI port");
+                g_enSystem_state = EN_NOREMAL;
+                break;
+            
+            default:
+
+                break;
+
+        }
         sleep(1);
-        printf("key : %d \n", get_key_value());
+        //printf("key : %d \n", get_key_value());
     }
 
     pthread_join(sharemem_main_handle, NULL);

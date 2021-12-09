@@ -44,7 +44,7 @@ int InitShareMemUpload(void)
 #define DEAL_BUF_LEN  1024
 #define SIGN_CODE_LEN  100
 #define FILE_NAME_LEN 64
-#define FILE_SAVE_DIR "/tmp/"
+#define FILE_SAVE_DIR "/customer/"
 
 
 enum
@@ -73,8 +73,8 @@ static void ShowErrorInfo(char * error)
 int main(void)
 {	
 #ifdef TX
-    remove("/tmp/viu-vpu0h264enc-mdev-rtsp");
-	system("/bin/killall viu-vpu0h264enc-mdev-rtsp");
+    remove("/customer/main_tx");
+	system("/bin/killall main_tx");
 #else
 	remove("/tmp/rtsp-mdev-vpu0-vpp_pv");
 	system("/bin/killall rtsp-mdev-vpu0-vpp_pv");
@@ -210,7 +210,7 @@ int main(void)
 
                        fileName_prt = fileName;
 #ifdef TX
-                       if(0>=strstr(fileName_prt,"viu-vpu0h264enc-mdev-rtsp"))
+                       if(0>=strstr(fileName_prt,"main_tx"))
 #else
                        if(0>=strstr(fileName_prt,"rtsp-mdev-vpu0-vpp_pv"))
 #endif
@@ -324,7 +324,7 @@ int main(void)
 #endif
 #if 1
 #ifdef TX
-	if(chmod("/tmp/viu-vpu0h264enc-mdev-rtsp", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
+	if(chmod("/customer/main_tx", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
 #else
 	if(chmod("/tmp/rtsp-mdev-vpu0-vpp_pv", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
 #endif
@@ -345,18 +345,18 @@ int main(void)
 
 #if 0
 rtsp-mdev-vpu0-vpp_pv
- if(chmod("/tmp/viu-vpu0h264enc-mdev-rtsp", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
-	chmod("/tmp/viu-vpu0h264enc-mdev-rtsp",S_IXUSR|S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
-	if(chmod("/tmp/viu-vpu0h264enc-mdev-rtsp",S_IXUSR)!=0)
+ if(chmod("/tmp/main_tx", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
+	chmod("/tmp/main_tx",S_IXUSR|S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+	if(chmod("/tmp/main_tx",S_IXUSR)!=0)
 	{
 		 printf("\ncm fail");
 		 return 0;
 	}
   	
-	  //system("rm /user/update/bin/viu-vpu0h264enc-mdev-rtsp");
+	  //system("rm /user/update/bin/main_tx");
       printf("content-Type:text/xml\n\n");
-      system("/bin/killall viu-vpu0h264enc-mdev-rtsp");  
-      if(remove("/tmp/viu-vpu0h264enc-mdev-rtsp")==0)
+      system("/bin/killall main_tx");  
+      if(remove("/tmp/main_tx")==0)
              printf("succeed\r\n\r\n");
       else
             printf("fail\r\n\r\n");

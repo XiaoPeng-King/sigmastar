@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "video_ringfifo.h"
+#include "hdmi_info.h"
 
-#define NMAX 40
+#define NMAX 60
 
 static int g_WriteIndex = 0; /*The current place position of the ring buffer*/
 static int g_ReadIndex = 0; /*The current fetch position of the buffer*/
@@ -17,23 +18,6 @@ static RING_NODE_FRAME g_Ringfifo[NMAX]; //The ring buffer array
 #define GET_INDEX(i) (i==(NMAX-1) ? 0 : ++i)
 
 static int VIDEO_INFO_SIZE = sizeof(H264_APPEND_INFO_s);
-static H264_APPEND_INFO_s h264_append_info;
-
-void update_init_info(void)
-{
-	h264_append_info.src_height=1088;
-	h264_append_info.src_width=1920;
-	h264_append_info.audio_bits=16;
-	h264_append_info.fs=44100;
-	h264_append_info.chns=2;
-	h264_append_info.frameRate=30;
-	h264_append_info.height=1080;
-	h264_append_info.width=1920;
-	h264_append_info.interlace=0;
-	h264_append_info.refreshRate=60;
-    printf("h264_append)info.fs:%d\n",h264_append_info.fs);
-    printf("h264_append_info.refreshRate: %d\n",h264_append_info.refreshRate);
-}
 
 //malloc for an element on the ring buffer 
 static char MallocIndex(int index, int size)
@@ -68,14 +52,19 @@ static void FreeIndex(unsigned int index)
     printf("FreeIndex error \n");
 }
 
-static unsigned int GetAllNumOfElements(void)
+unsigned int GetAllNumOfElements(void)
 {
-    //printf("g_AllNumOfElements : %d \n", g_AllNumOfElements);
+    if (g_AllNumOfElements > 30)
+    {
+        //printf("g_AllNumOfElements : %d \n", g_AllNumOfElements);
+    }
+    
     return g_AllNumOfElements;
 }
 
 void RingInit(void)
 {
+    printf("Video ringfifo init !");
     g_ReadIndex = 0;
     g_WriteIndex = 0;
     g_AllNumOfElements = 0;
@@ -134,7 +123,7 @@ unsigned int PutH264DataToBuffer(unsigned char *pFrame, unsigned int Size, int T
 #if 1
     if ((GetAllNumOfElements() < NMAX) && (GetAllNumOfElements() >= 0))
     {
-        if (5 == Type)
+        if (5 == Type) //I frame 
         {
             //printf("this is I frame \n");
             g_Ringfifo[g_WriteIndex].FrameType = FRAME_TYPE_I;
@@ -149,7 +138,7 @@ unsigned int PutH264DataToBuffer(unsigned char *pFrame, unsigned int Size, int T
             
             ret = Size + VIDEO_INFO_SIZE;
         }
-        else
+        else //P frame
         {
             //printf("this is P frame \n");
             g_Ringfifo[g_WriteIndex].FrameType = FRAME_TYPE_P;
@@ -164,8 +153,9 @@ unsigned int PutH264DataToBuffer(unsigned char *pFrame, unsigned int Size, int T
     }
     else
     {
-        printf("The Ring Buffer is full !! \n");
-        usleep(1000);
+        //printf("g_AllNumOfElements : %d \n", g_AllNumOfElements);
+        //printf("The video ring fifo is full !! \n");
+        //usleep(1000);
         ret = 0;
     }
 #endif

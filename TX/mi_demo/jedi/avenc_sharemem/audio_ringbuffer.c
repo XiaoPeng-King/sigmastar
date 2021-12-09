@@ -20,7 +20,7 @@ typedef struct
 }RingBufferBK;
 
 #define MIN(X, Y)	(((unsigned int)(X) > (unsigned int)(Y))?  (Y) : (X))
-#define RINGBUFFER_SIZE		1024*1024
+#define RINGBUFFER_SIZE		2*1024*1024
 static RingBufferBK *Rb = NULL;
 //FILE *pAudio = NULL;
 static int InitRingBuffer()

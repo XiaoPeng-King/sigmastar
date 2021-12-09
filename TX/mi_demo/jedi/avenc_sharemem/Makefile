@@ -37,7 +37,7 @@ LIBS_PATH += -L$(TOPDIR)/ex_libs/dynamic
 SRC = $(wildcard *.c)
 OBJ = $(patsubst %.c, %.o, $(SRC))
 
-TARGET := main
+TARGET := main_tx
 
 all: $(TARGET)
 

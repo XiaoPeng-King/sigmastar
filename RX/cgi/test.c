@@ -42,7 +42,7 @@ int InitShareMemUpload(void)
 #define DEAL_BUF_LEN  1024
 #define SIGN_CODE_LEN  100
 #define FILE_NAME_LEN 64
-#define FILE_SAVE_DIR "/tmp/"
+#define FILE_SAVE_DIR "/customer/"
 
 enum
 {
@@ -73,8 +73,8 @@ int main(void)
     remove("/tmp/viu-vpu0h264enc-mdev-rtsp");
 	system("/bin/killall viu-vpu0h264enc-mdev-rtsp");
 #else
-	remove("/tmp/rtsp-mdev-vpu0-vpp_pv");
-	system("/bin/killall rtsp-mdev-vpu0-vpp_pv");
+	remove("/customer/main_rx");
+	system("/bin/killall main_rx");
 #endif
 
 	//printf("Content-Type:text/xml \r\n\r\n");
@@ -209,7 +209,7 @@ int main(void)
 #ifdef TX
                        if(0>=strstr(fileName_prt,"viu-vpu0h264enc-mdev-rtsp"))
 #else
-                       if(0>=strstr(fileName_prt,"rtsp-mdev-vpu0-vpp_pv"))
+                       if(0>=strstr(fileName_prt,"main_rx"))
 #endif
                        {	
 						   fprintf(stderr,"open file error\n");			   
@@ -323,7 +323,7 @@ int main(void)
 #ifdef TX
 	if(chmod("/tmp/viu-vpu0h264enc-mdev-rtsp", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
 #else
-	if(chmod("/tmp/rtsp-mdev-vpu0-vpp_pv", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
+	if(chmod("/customer/main_rx", S_IRUSR|S_IXUSR|S_IWUSR|S_IXOTH|S_IROTH|S_IWOTH|S_IRGRP|S_IWGRP|S_IXGRP)!=0)
 #endif
 	{
 		 printf("\ncm fail");

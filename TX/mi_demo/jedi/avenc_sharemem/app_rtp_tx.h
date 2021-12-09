@@ -3,12 +3,12 @@
 
 #define RTP_PORT    8001
 #define LENGTH_OF_LISTEN_QUEUE     20
-#define BUFFER_SIZE               2* 1024*1024 //1M
+#define BUFFER_SIZE               2* 1024*1024 //2M
 #define DATANUM 10000000
 #define UDP_MTU	1024*10
 
 #define FETCH_COUNT 1024*10
-#define CHECK_SUM_COUNT 1024*50
+#define CHECK_SUM_COUNT 1024*10
 
 #define MCAST_ADDR		"239.255.42.44"
 

@@ -14,7 +14,7 @@
 
 #define CECKHEAD	0x1A1B1C1D
 
-#define CHECK_SUM_COUNT 1024*50
+#define CHECK_SUM_COUNT 1024*10
 
 typedef struct
 {
