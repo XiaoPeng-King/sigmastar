@@ -1913,7 +1913,8 @@ int audio_thread(void)
             RingPCMPush(buffer, len);
             #else
             //memcpy(pBuffer, pStream, stAiChFrame.u32SrcPcmLen);
-            RingPCMPush(pStream, stAiChFrame.u32SrcPcmLen);
+            if (stAiChFrame.u32SrcPcmLen > 0)
+                RingPCMPush(pStream, stAiChFrame.u32SrcPcmLen);
             #endif
             
             MI_AI_ReleaseFrame(priv->AiDevId, priv->AiChn,  &stAiChFrame,  NULL);

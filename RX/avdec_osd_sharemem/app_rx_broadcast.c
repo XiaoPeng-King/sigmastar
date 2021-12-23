@@ -13,12 +13,11 @@
 #include "sharemem.h"
 #include "init_net.h"
 //#include "app_rx_io_ctl.h"
+#include "main.h"
+
+extern SYSTEM_ATTR_s g_system_attr;
 
 #define DEBUG
-
-extern char g_display_flag;
-extern char g_ipConflict_flag;
-extern char g_multicastChange_flag;
 
 #if 1
 static int get_random(void)
@@ -140,7 +139,7 @@ try_socket:
 					}
 					else
 					{
-						g_display_flag = broadRecv_s.ucInfoDisplayFlag;
+						g_system_attr.info_display = broadRecv_s.ucInfoDisplayFlag;
 						//printf("ucInfoDisplayFlag: %d \n", broadRecv_s.ucInfoDisplayFlag);
 					}
 
@@ -161,7 +160,7 @@ try_socket:
 					if (broadRecv_s.ucIpRepeat > 1)
 					{
 						//printf("Device ID repeated, please check device switch key ! \n");
-						g_ipConflict_flag = 1;
+						g_system_attr.ip_conflict_flag = 1;
 						continue;
 					}
 
@@ -382,20 +381,17 @@ try_socket:
 								if (recive_cmd[i+3] == ip_add-1)
 								{
 									//printf("\n\n-----------------\n\n");
-									g_ipConflict_flag = 1;
+									if (g_system_attr.display_state.signal_state == EN_NORMAL)
+										g_system_attr.display_state.signal_normal = EN_IP_CONFLICT;
 									break;
 								}
-								else
-								{
-									g_ipConflict_flag = 0;
-								}
-								
 							}
 							break;
 
 						case 0x03: //display ip and multicast info
 							printf("display ip and multicast info \n");
-							g_display_flag = 1;
+							if (g_system_attr.display_state.signal_state == EN_NORMAL)
+								g_system_attr.display_state.signal_normal = EN_INFO_DIAPLAY;
 							break;
 #ifdef CEC_ENABLE
 						case 0x04:
@@ -434,8 +430,11 @@ try_socket:
 			}
 			else
 			{
-				g_display_flag = 0;
-				g_ipConflict_flag = 0;
+
+				g_system_attr.display_state.signal_normal = EN_CLOSE_DISPLAY;
+				
+				g_system_attr.display_flag = 0;
+				g_system_attr.ip_conflict_flag = 0;
 			}
 		}
 	}

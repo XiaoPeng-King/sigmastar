@@ -22,14 +22,17 @@ int init_eth(void)
     strcat(syscmd,share_mem->sm_eth_setting.strEthIp);
     strcat(syscmd," netmask ");
     strcat(syscmd,share_mem->sm_eth_setting.strEthMask);
-	
+	printf("init eth : ");
     printf(syscmd);
+    
+    #if 1
+    //Ip set
+    system(syscmd);
     
     //multicast route address configure
     system(MUL_ADDRESS);
     system(DEFAULT_ROUTE);
-    //Ip set
-    system(syscmd);
+    #endif
     printf("\ninit eth finish \n");
 
     return 0;

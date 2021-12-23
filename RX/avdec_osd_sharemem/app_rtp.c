@@ -19,11 +19,16 @@
 #include "linux_common.h"
 #include "crc.h"
 #include "sharemem.h"
+#include "main.h"
+
+extern SYSTEM_ATTR_s g_system_attr;
 
 //#define RTP_UDP
 #define CHECKSUM_AUDIO
 #define CHECKSUM_VIDEO
 //#define DEBUG
+
+#define NO_SIGNAL	"check hdmi signal"
 
 static FILE * outfile  = NULL;
 
@@ -292,6 +297,8 @@ void *app_rtp_main(void *args)
 	clielen_addr_length = sizeof(client_addr);
 	
 ReSocket:
+	g_system_attr.multicast_change_flag = FALSE;
+
 	//struct tcp_info info;
 	bzero(&server_addr, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
@@ -338,12 +345,34 @@ Recv:
 		#if 1
 		//recv data
 		len = RecvFromSrcAddr(rtp_server_socket, buf, BUFFER_SIZE, 0, (struct sockaddr_in *) &client_addr, &clielen_addr_length);
-		if (len > 0)
+		if (len < 0)
+		{
+			printf("recv error \n");
+			g_system_attr.display_state.signal_state = EN_ABNORMAL;
+			g_system_attr.display_state.signal_abnormal = EN_NO_TX;
+			#if 1
+			if (TRUE == g_system_attr.multicast_change_flag)
+			{
+				close(rtp_server_socket);
+				goto ReSocket;
+			}
+			
+			#endif
+		}
+		else
 		{
 			#ifdef DEBUG
 			//printf("len : %d \n", len);
 			#endif
+			if (0 == strcmp(buf, NO_SIGNAL))
+			{
+				g_system_attr.display_state.signal_state = EN_ABNORMAL;
+				g_system_attr.display_state.signal_abnormal = EN_NO_HDMI;
+				printf(NO_SIGNAL);
+				continue;
+			}
 			#if 1
+			g_system_attr.display_state.signal_state = EN_NORMAL;
 			if (0==bStartRecv)
 			{
 				//check data header
@@ -639,6 +668,7 @@ Recv:
 			}
 			#endif
 		}
+		
 #endif
 	}
 	close(rtp_server_socket);

@@ -14,7 +14,7 @@ static void switch_ip(void)
     printf("\n\n-------");
     printf(str);
     printf("---------\n\n");
-#if 0
+#if 1
     if (strcmp(str, share_mem->sm_eth_setting.strEthIp))
     {
         strcpy(share_mem->sm_eth_setting.strEthIp, str);

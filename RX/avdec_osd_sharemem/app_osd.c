@@ -8,6 +8,10 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include "font_8x16.c"
+#include "main.h"
+
+extern SYSTEM_ATTR_s g_system_attr;
+
 int fd_fb;
 struct fb_var_screeninfo var;	/* Current var */
 int screen_size;
@@ -73,11 +77,57 @@ static void lcd_put_ascii(int x, int y, unsigned char c){
 
 int osd_disable(void)
 {
-	osd_display(0, 0, " ");
+	if (g_system_attr.display_flag == TRUE)
+	{
+		g_system_attr.display_flag = FALSE;
+	}
+	else
+	{
+		return 0;
+	}
+	printf("osd disable !\n");
+	fd_fb = open("/dev/fb0", O_RDWR);
+	if (fd_fb < 0){
+		printf("can't open /dev/fb0\n");
+		return -1;
+	}
+	if (ioctl(fd_fb, FBIOGET_VSCREENINFO, &var)){///获取屏幕可变信息
+		printf("can't get var\n");
+		return -1;
+	}
+
+	line_width  = var.xres * var.bits_per_pixel / 8;//一行像素所需要的字节数
+	pixel_width = var.bits_per_pixel / 8;//一个像素需要的字节数
+	screen_size = var.xres * var.yres * var.bits_per_pixel / 8;//一帧画面所需要的字节数
+	//printf("x: %d, y: %d \n", var.xres, var.yres);
+	//printf("screen size : %d \n", screen_size);
+	//printf("bits_per_pixel : %d.\n",var.bits_per_pixel);
+
+	fbmem = (unsigned char *)mmap(NULL , screen_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd_fb, 0);//映射framebuffer
+	if (fbmem == (unsigned char *)-1){
+		printf("can't mmap\n");
+		return -1;
+	}
+
+	/* 清屏: 全部设为黑色 */
+	memset(fbmem, 0, screen_size);//设置黑屏
+
+	munmap(fbmem , screen_size);
+	close(fd_fb);
+	return 0;	
 }
 
 int osd_display(unsigned int x, unsigned int y, char *str)
 {
+	if (g_system_attr.display_flag == FALSE)
+	{
+		g_system_attr.display_flag = TRUE;
+	}
+	else
+	{
+		return 0;
+	}
+	printf("osd display : %s !\n", str);
 	fd_fb = open("/dev/fb0", O_RDWR);
 	if (fd_fb < 0){
 		printf("can't open /dev/fb0\n");

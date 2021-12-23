@@ -98,7 +98,7 @@ switch( nSpeed )
     
     return 0;
 }
- 
+
 int open_port(int fd,int comport)
 {
     char *dev[]={"/dev/ttyS0","/dev/ttyS1","/dev/ttyS2"};
@@ -159,13 +159,13 @@ int open_port(int fd,int comport)
     printf("fd-open=%d\n",fd);
     return fd;
 }
- 
+
 int uart_main(void)
 {
     int fd;
     int nread, nwrite, i;
     unsigned int ispeed,ospeed;
-    char write_buff[8]="a";
+    char write_buff[8]="A";
 	char read_buff[8]="";
     struct termios tmptio;
  
@@ -174,7 +174,7 @@ int uart_main(void)
         perror("open_port error");
         return;
     }
-    if((i=set_opt(fd,1500000,8,'N',1))<0)
+    if((i=set_opt(fd,9600,8,'N',1))<0)
     {
         perror("set_opt error");
         return;

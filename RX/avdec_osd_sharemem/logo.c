@@ -47,7 +47,7 @@ MI_FB_DisplayLayerAttr_t g_stLayerInfo = {0};
 static char *frameBuffer = NULL;
 
 #define LOGO_FILE_RAW "/sstar_configs/logo.raw"
-#define LOGO_FILE_JPG "./logo.jpg"
+#define LOGO_FILE_JPG "/customer/logo.jpg"
 #define LOGO_FILE_PNG "/sstar_configs/logo.png"
 
 #define LOGO_FILE LOGO_FILE_JPG
@@ -549,6 +549,7 @@ int logo_display(void)
         perror("Error reading variable information");
         exit(3);
     }
+    
     //get FBIOGET_DISPLAYLAYER_ATTRIBUTES
     if(ioctl(fbFd, FBIOGET_DISPLAYLAYER_ATTRIBUTES, &g_stLayerInfo) == -1)
     {

@@ -9,11 +9,10 @@
 #include <unistd.h>
 #include "linux_common.h"
 #include "app_igmp.h"
-#include "sharemem.h"
+//#include "sharemem.h"
+#include "main.h"
 
-//extern char g_multicast[20];
-//extern char web_flag;
-//extern char g_multicastChange_flag;
+extern SYSTEM_ATTR_s g_system_attr;
 #define MULTICAST_LEN	20
 static char multicast_tmp[MULTICAST_LEN];
 
@@ -49,11 +48,11 @@ int IGMP_config(const char type)
 		IGMP_Packet.ucType = type; //report packet
 		IGMP_Packet.ucMaxRspCode = 0; //tmieout
 		//IGMP_Packet.uiAddGroup = inet_addr(g_multicast); //report address
-		IGMP_Packet.uiAddGroup = inet_addr(share_mem->sm_eth_setting.strEthMulticast); //report address
+		IGMP_Packet.uiAddGroup = inet_addr(g_system_attr.multicast); //report address
 		IGMP_Packet.usChecksum = 0;
 		IGMP_Packet.usChecksum = csum(&IGMP_Packet, sizeof(IGMP_V2));
 		//printf("usChecksum : 0x%x \n", IGMP_Packet.usChecksum);
-		memcpy(multicast_tmp, share_mem->sm_eth_setting.strEthMulticast, MULTICAST_LEN);
+		memcpy(multicast_tmp, g_system_attr.multicast, MULTICAST_LEN);
 	}
 }
 
@@ -75,7 +74,7 @@ ReSocket:
     //web_flag = 0;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(IGMP_PORT);
-	server_addr.sin_addr.s_addr=inet_addr(share_mem->sm_eth_setting.strEthMulticast); //UDP multicast address
+	server_addr.sin_addr.s_addr=inet_addr(g_system_attr.multicast); //UDP multicast address
 	
     //sock_cli = socket(AF_INET,SOCK_DGRAM, 0); //UDP
     sock_cli = CreateIGMPSocket(); //IGMP
@@ -92,7 +91,7 @@ ReSocket:
 	{
 		//IGMP_config(IGMP_REPORT);
 		//printf("web_flag = %d \n", web_flag);
-		if (0 != memcmp(multicast_tmp, share_mem->sm_eth_setting.strEthMulticast, MULTICAST_LEN))
+		if (0 != memcmp(multicast_tmp, g_system_attr.multicast, MULTICAST_LEN))
 		{
 			server_addr.sin_addr.s_addr=inet_addr(LEAVE_ADDR);
 			IGMP_config(IGMP_LEAVE);

@@ -42,18 +42,82 @@ static int update_HDMI_info(H264_APPEND_INFO_s *info)
 		
 		if ((u16SnrHeight==1080) && (u16SnrWidth==1920))
 		{
-			info->src_height = 1088;
 			info->src_width = 1920;
+			info->src_height = 1088;
 			info->width = 1920;
 			info->height = 1080;
 			ret = 1;
 		}
 		else if ((u16SnrHeight==720) && (u16SnrWidth==1280))
 		{
-			info->src_height = 720;
+			
 			info->src_width = 1280;
+			info->src_height = 720;
 			info->width = 1280;
 			info->height = 720;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==1050) && (u16SnrWidth==1680))
+		{
+			
+			info->src_width = 1680;
+			info->src_height = 1050;
+			info->width = 1680;
+			info->height = 1050;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==1050) && (u16SnrWidth==1600))
+		{
+			
+			info->src_width = 1600;
+			info->src_height = 1050;
+			info->width = 1600;
+			info->height = 1050;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==900) && (u16SnrWidth==1600))
+		{
+			
+			info->src_width = 1600;
+			info->src_height = 900;
+			info->width = 1600;
+			info->height = 900;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==900) && (u16SnrWidth==1440))
+		{
+			
+			info->src_width = 1440;
+			info->src_height = 900;
+			info->width = 1440;
+			info->height = 900;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==1050) && (u16SnrWidth==1400))
+		{
+			
+			info->src_width = 1400;
+			info->src_height = 1050;
+			info->width = 1400;
+			info->height = 1050;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==768) && (u16SnrWidth==1024))
+		{
+			
+			info->src_width = 1024;
+			info->src_height = 768;
+			info->width = 1024;
+			info->height = 768;
+			ret = 1;
+		}
+		else if ((u16SnrHeight==480) && (u16SnrWidth==720))
+		{
+			
+			info->src_width = 720;
+			info->src_height = 480;
+			info->width = 720;
+			info->height = 480;
 			ret = 1;
 		}
 		else
@@ -68,10 +132,10 @@ static int update_HDMI_info(H264_APPEND_INFO_s *info)
 
 int init_info(void)
 {
-	h264_append_info.src_height=720;//1088;
-	h264_append_info.src_width=1280;//1920;
-	h264_append_info.height=720;//1080;
-	h264_append_info.width=1280;//1920;
+	h264_append_info.src_height=1088;
+	h264_append_info.src_width=1920;
+	h264_append_info.height=1080;
+	h264_append_info.width=1920;
 	h264_append_info.audio_bits=16;
 	h264_append_info.fs=44100;
 	h264_append_info.chns=2;

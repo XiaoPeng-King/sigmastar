@@ -58,6 +58,7 @@
 #define MAX_JSON_STR_LEN    16
 
 unsigned char g_Exit = 1;
+char g_HDMI_STATE = -1;
 
 typedef enum {
     EN_NOREMAL = 0,
@@ -117,6 +118,8 @@ typedef struct
     VENC_ChnConf_t conf[2];
 } VENC_Ctx_t;
 #endif
+
+
 
 static MI_BOOL g_bExit = FALSE;
 static MI_S32 g_skipFrame = 35;
@@ -1509,7 +1512,7 @@ void venc_output_thread(void *args)
                     {
                         //write(fd, stStream.pstPack[i].pu8Addr + stStream.pstPack[i].u32Offset,stStream.pstPack[i].u32Len - stStream.pstPack[i].u32Offset);
                         PutH264DataToBuffer((stStream.pstPack[i].pu8Addr + stStream.pstPack[i].u32Offset), (stStream.pstPack[i].u32Len - stStream.pstPack[i].u32Offset), stStream.pstPack[i].stDataType.eH264EType);
-                        printf("0");
+                        //printf("0");
                         usleep(100);
                     }
 
@@ -2212,38 +2215,28 @@ int main(int argc, char **argv)
     vpe_bind_venc();
 
 #if 1
-    //CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
-    //CreateThread(&uart_watchdog_handle, NULL, uart_main, NULL);
+    CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
+    CreateThread(&uart_watchdog_handle, NULL, uart_main, NULL);
     
     // get es stream
     CreateThread(&ctx.conf->pt_output, NULL, (void*)venc_output_thread, (void *)ctx.conf);
     CreateThread(&rtp_sned_handle, NULL, (void*)send_rtp_tx, NULL);
-    //CreateThread(&audio_thread_handle, NULL, (void*)audio_thread, NULL);
-    //CreateThread(&sharemem_handle, NULL, (void*)sharemem_main, NULL);
+    CreateThread(&audio_thread_handle, NULL, (void*)audio_thread, NULL);
+    CreateThread(&sharemem_handle, NULL, (void*)sharemem_main, NULL);
     
-    //CreateThread(&control_handle, NULL, (void*)control_slave, NULL);
+    CreateThread(&control_handle, NULL, (void*)control_slave, NULL);
     //CreateThread(&backup_handle, NULL, (void*)backup_host, NULL);
 
 #endif
-    int ret = -1;
     while (g_Exit) //thread 0
     {
         sleep(1);
-        ret = check_hdmi_signal(&h264_append_info);
-        if (1 == ret)
+        g_HDMI_STATE = check_hdmi_signal(&h264_append_info);
+        if (1 == g_HDMI_STATE)
         {   
-            venc_parse_options(&ctx);
             deinit_pre_venc();
             init_pre_venc();
-
-            init_venc_config(&ctx);
-
-            //venc configure 
-            venc_start_chn(ctx.conf);
-            vpe_bind_venc();
         }
-
-        
         //printf("\n\n");
     }
 

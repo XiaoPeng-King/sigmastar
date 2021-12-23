@@ -32,6 +32,7 @@
 #define CHECKSUM_AUDIO
 #define CHECKSUM_VIDEO
 extern unsigned char g_Exit;
+extern char g_HDMI_STATE;
 static FILE *pcmfp = NULL;
 static FILE *pcmfp1 = NULL;
 static FILE *p264File = NULL;
@@ -121,23 +122,17 @@ ReSocket:
 	while (g_Exit)
 	{
 		//multicast switch 
-#if 0
-		//Check HDMI signal 
-		char hdmi_state = check_hdmi();
-		if (0 < hdmi_state)
+#if 1
+		//Check HDMI signal
+		//printf("-----g_HDMI_STATE: %d ------\n", g_HDMI_STATE);
+		if (0 < g_HDMI_STATE)
 		{
 			timeOut++;
 			bzero(pCheck, sizeof(pCheck));
-			if (-1 == hdmi_state)
-			{
-				memcpy(pCheck, NO_SIGNAL, sizeof(pCheck));
-				printf(NO_SIGNAL);
-			}
-			else if (2 == hdmi_state)
-			{
-				memcpy(pCheck, CANT_SUPPORT, sizeof(pCheck));
-				printf(CANT_SUPPORT);
-			}
+			
+			memcpy(pCheck, NO_SIGNAL, sizeof(pCheck));
+			printf(NO_SIGNAL);
+			
 			SendToDestAddr(sock_cli, pCheck, sizeof(pCheck), 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
 			
 			sleep(1);
@@ -171,11 +166,11 @@ ReSocket:
 			#endif
 
 			GetElementFromRing(&FrameInfo);
-			printf("V");
+			//printf("V");
 			if (FrameInfo.FrameType == FRAME_TYPE_I) //I frame
 			{
 				//printf("this is i frame\n");
-				printf("-I-\n\n");
+				//printf("-I-\n\n");
 				DataHead.iLen = FrameInfo.FrameSize;
 				DataHead.uPayloadType = H264;
 				tmp_len = FrameInfo.FrameSize;
@@ -214,7 +209,7 @@ ReSocket:
 			}
 			else //p frame
 			{
-				printf("P");
+				//printf("P");
 				//printf("this is p frame\n");
 				tmp_len = FrameInfo.FrameSize;
 				DataHead.iLen = FrameInfo.FrameSize;
@@ -257,7 +252,7 @@ ReSocket:
 #if 1
 		if (RingGetByteStreamMemoryBufferCnt() > FETCH_COUNT)
 		{
-			printf("A");
+			//printf("A");
 			//printf("/***************Audio data****************/\n");
 			#if 0
 			ret = gettimeofday(&tv1,&tz);

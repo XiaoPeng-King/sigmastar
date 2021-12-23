@@ -4,19 +4,12 @@
 #include <stdlib.h>
 //#include "EEPROM.h"
 //#include "app_rx_io_ctl.h"
-
+#include "main.h"
 
 #define CONFIG_EEPROM
 
-char web_flag;
-
-char g_Is_E2prom;
-
 static int fd_config;
-
-extern char g_multicast[20];
-extern char g_serverip[20];
-
+extern SYSTEM_ATTR_s g_system_attr;
 int InitShareMem(void)
 {
 	int shmid;
@@ -39,7 +32,7 @@ int InitShareMem(void)
 	if (ret < 0) //isn't eeprom
 	{
 		AppInitCfgInfoDefault();
-		g_Is_E2prom = 0;
+		g_system_attr.e2prom = 0;
 		//printf("\n\n*****e2prom read error*****\n\n");
 		ret = AppInitCfgInfoFromFile(&fd_config); //reinit share memory form file
 		if (ret < 0) 
@@ -57,7 +50,7 @@ int InitShareMem(void)
 	}
 	else
 	{
-		g_Is_E2prom = 1;
+		g_system_attr.e2prom = 1;
 
 		if (2 == ret)
 		{
@@ -94,8 +87,8 @@ void *sharemem_handle(void *arg)
 		if (1==share_mem->ucUpdateFlag)
 		{
 			printf("\nweb start \n");
-			strcpy(g_multicast, share_mem->sm_eth_setting.strEthMulticast); //get now multicast address
-			web_flag = 1;
+			strcpy(g_system_attr.multicast, share_mem->sm_eth_setting.strEthMulticast); //get now multicast address
+			g_system_attr.multicast_change_flag = TRUE;
 			printf("cec1 on code : %s \n", share_mem->cec_control.cec_code_on);
 			printf("cec2 off code : %s \n", share_mem->cec_control.cec_code_off);
 			printf("cec state : %d \n", share_mem->cec_control.cec_state);

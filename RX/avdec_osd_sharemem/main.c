@@ -38,6 +38,8 @@
 #include "app_rx_broadcast.h"
 #include "app_igmp.h"
 #include "init_net.h"
+#include "main.h"
+
 
 #define STCHECKRESULT(result)\
     if (result != MI_SUCCESS)\
@@ -76,13 +78,16 @@
     #define VDEC_OUTPUT_HEIGHT    600
 #endif
 
-typedef enum {
-    EN_NOREMAL = 0,
-    EN_NO_SIGNAL, 
-    EN_NO_HDMI,
-    EN_DISABLE_DISPLAY
-}SYSTEM_STATE_e;
-SYSTEM_STATE_e g_enSystem_state = EN_NOREMAL;
+SYSTEM_ATTR_s g_system_attr = {
+    .display_state.signal_state = EN_NORMAL,
+    .display_state.signal_normal = EN_CLOSE_DISPLAY,
+	.multicast = "239.255.42.31",
+	.serverip = "192.168.36.1",
+	.display_flag = TRUE,
+	.multicast_change_flag = FALSE,
+	.e2prom = FALSE,
+};
+
 
 typedef struct WAVE_FORMAT
 {
@@ -130,12 +135,6 @@ static MI_S32 s32SoundLayout;
 static MI_S32 s32SampleRate;
 static MI_BOOL bExit = FALSE;
 MI_VDEC_CodecType_e _eCodecType = E_MI_VDEC_CODEC_TYPE_H264;//E_MI_VDEC_CODEC_TYPE_H265;
-
-char g_multicast[20] = "239.255.42.31";
-char g_serverip[20];
-char g_display_flag = 0;
-char g_ipConflict_flag = 0;
-char g_multicastChange_flag = 0;
 
 int sstar_vdec_init(void)
 {
@@ -786,7 +785,11 @@ static void * sstar_video_thread(void* arg)
 
 void wacPushFrameToMDev(unsigned char *pFrame, unsigned int uiSize)
 {
-    //return 0;
+    if (uiSize <= 0)
+    {
+        return 0;
+    }
+    
     static FILE *pFile = NULL;
     unsigned char *data = NULL;
     
@@ -834,6 +837,11 @@ void wacPushFrameToMDev(unsigned char *pFrame, unsigned int uiSize)
 static FILE *fd = 0;
 void audio_play(unsigned char *pPCM, unsigned int uiSize)
 {
+    if (uiSize <= 0)
+    {
+        printf("pcm data <= 0 \n");
+        return 0;
+    }
     #if 0
     if (fd == 0)
     {
@@ -887,6 +895,7 @@ static int init_system(void)
     sstar_vdec_init(); //vdec init   
     sstar_ao_init(); //
     init_eth();
+    sleep(1);
 }
 
 int main (int argc, char **argv)
@@ -924,32 +933,56 @@ int main (int argc, char **argv)
     CreateThread(&IP_broadcast_report_handle, NULL, IP_broadcast_report, NULL);
     CreateThread(&IGMP_report_handle, NULL, app_igmp_report, NULL);
     
-    g_enSystem_state = EN_NO_HDMI;
-
+    char string[100] = {};
+    osd_disable();
     while (1)
     {
-        switch (g_enSystem_state)
+        //printf("g_system_attr.display_state.signal_state: %d \n", g_system_attr.display_state.signal_state);
+        switch (g_system_attr.display_state.signal_state)
         {
-            case EN_DISABLE_DISPLAY:
-                osd_disable();
-                g_enSystem_state = EN_NOREMAL;
+            case EN_ABNORMAL:
+                //printf("g_system_attr.display_state.signal_abnormal: %d \n", g_system_attr.display_state.signal_abnormal);
+                switch (g_system_attr.display_state.signal_abnormal)
+                {
+                    case EN_NO_HDMI:
+                        sprintf(string, "ID-%s: is checking TX-%s HDMI signal!", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
+                        osd_display(20, 20, string);
+                        printf(string);
+                        break;
+
+                    case EN_NO_TX:
+                        sprintf(string, "ID-%s: is searching TX-%s device!", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
+                        osd_display(20, 20, string);
+                        printf(string);
+                        break;
+                }
                 break;
 
-            case EN_NO_SIGNAL:
-                osd_display(20, 20, "Check TX's HDMI signal");
-                g_enSystem_state = EN_NOREMAL;
+            case EN_NORMAL:
+                //printf("g_system_attr.display_state.signal_normal: %d \n", g_system_attr.display_state.signal_normal);
+                switch (g_system_attr.display_state.signal_normal)
+                {
+                    case EN_IP_CONFLICT:
+                        sprintf(string, "ID-%s: is conflicting", share_mem->sm_eth_setting.strEthIp);
+                        osd_display(20, 20, string);
+                        printf(string);
+                        break;
+                    
+                    case EN_INFO_DIAPLAY:
+                        sprintf(string, "IP : %s MULTICAST : %s", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
+                        printf(string);
+                        osd_display(20, 20, string);
+                        break;
+                    
+                    case EN_CLOSE_DISPLAY:
+                        
+                        osd_disable();
+                        break;
+                }
+               
                 break;
-            
-            case EN_NO_HDMI:
-                osd_display(20, 20, "Check TX's HDMI port");
-                g_enSystem_state = EN_NOREMAL;
-                break;
-            
-            default:
-
-                break;
-
         }
+        //printf("");
         sleep(1);
         //printf("key : %d \n", get_key_value());
     }

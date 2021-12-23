@@ -15,7 +15,7 @@
 #include "cfginfo.h"
 #include "Setting.h"
 #include "sharemem.h"
-
+#include "main.h"
 //#include "EEPROM.h"
 
 //#define CONFIG_FILE ("/user/configs/config.conf")
@@ -24,7 +24,8 @@
 #define CONFIG_FILE ("./config.conf")
 #define CONFIG_EEPROM
 
-extern char g_Is_E2prom;
+extern SYSTEM_ATTR_s g_system_attr;
+
 
 #if 1
 static int get_random(void)
@@ -121,7 +122,7 @@ int AppWriteCfgInfotoFile(void)
 {
     printf("\n-------AppWriteCfgInfotoFile----------\n");
 #ifdef CONFIG_EEPROM
-    if (1 == g_Is_E2prom)
+    if (1 == g_system_attr.e2prom)
     {
         WriteConfigIntoE2prom(share_mem);
         return 0;
