@@ -21,6 +21,14 @@
 //1010 		1	 	11 		1/0 	769-1024
 /***********************************************************/
 
+//一个block是256bit
+//注意：读写标记位我们的IIC控制器自己会添加，因此，我们实际的地址是7位
+#define ADDRESS_BLOCK_1		0x50	//0 1010	0	00 
+#define ADDRESS_BLOCK_2		0x51	//0 1010 	0	01 
+#define ADDRESS_BLOCK_3		0x52	//0 1010	0	10 
+#define ADDRESS_BLOCK_4		0x53	//0 1010	0 	11 
+
+
 /**
  * @brief 
  * Function : get_eigenbytes 
@@ -46,32 +54,24 @@ addr_ctrl_byte_struct get_eigenbytes(uint16_t address_in_chip)
 	}
 	else
 	{
-		if((address_in_chip>=0x00) && (address_in_chip<0x100)) //256
+		if((address_in_chip>=0x00) && (address_in_chip<0x100)) //0-256
 		{
-			//cbs.ctrl_byte  = 0xA0; //1010 0000
-			//cbs.ctrl_byte  = 0xA8; //1010 1000
-			cbs.ctrl_byte  = 0x54; //0101 0100
+			cbs.ctrl_byte  = ADDRESS_BLOCK_1;
 			cbs.word_addr  = address_in_chip;
 		}
-		else if((address_in_chip>=0x100) && (address_in_chip<0x200)) //512
+		else if((address_in_chip>=0x100) && (address_in_chip<0x200)) //267-512
 		{
-			//cbs.ctrl_byte  = 0xA2; //1010 0010
-			//cbs.ctrl_byte  = 0xAA; //1010 1010
-			cbs.ctrl_byte  = 0x55; //0101 0101
+			cbs.ctrl_byte  = ADDRESS_BLOCK_2;
 			cbs.word_addr  = address_in_chip%0x100;
 		}
-		else if((address_in_chip>=0x200) && (address_in_chip<0x300)) //768
+		else if((address_in_chip>=0x200) && (address_in_chip<0x300)) //513-768
 		{
-			//cbs.ctrl_byte  = 0xA4; //1010 0100
-			//cbs.ctrl_byte  = 0xAC; //1010 1100
-			cbs.ctrl_byte  = 0x56; //0101 0110
+			cbs.ctrl_byte  = ADDRESS_BLOCK_3;
 			cbs.word_addr  = address_in_chip%0x200;
 		}
-		else
+		else	//769-1024
 		{
-			//cbs.ctrl_byte  = 0xA6; //1010 0110
-			//cbs.ctrl_byte  = 0xAE; //1010 1110
-			cbs.ctrl_byte  = 0x57; //0101 0111
+			cbs.ctrl_byte  = ADDRESS_BLOCK_4;
 			cbs.word_addr  = address_in_chip%0x300; 
 		}
 	}
