@@ -7,14 +7,15 @@
 *功能：             打开串口并返回串口设备文件描述  
 *入口参数：         fd      文件描述符
                     port    串口号(ttyS0,ttyS1,ttyS2)  
-*出口参数：正确返回为1，错误返回为0  
+*出口参数：正确返回为 fd，错误返回为 -1
 *******************************************************************/    
-int UART0_Open(int fd,char*port)
-{    
+int UART0_Open(char *port)
+{   
+    int fd = -1;
     fd = //open( port, O_RDWR|O_NOCTTY|O_NDELAY);    
-	open( port, O_RDWR|O_NDELAY);    
+	open( port, O_RDWR|O_NDELAY);
     if (fd<0)    
-    {    
+    {
         perror("Can't Open Serial Port");    
         return(FALSE);    
     }    
@@ -29,17 +30,19 @@ int UART0_Open(int fd,char*port)
         printf("fcntl=%d\n",fcntl(fd, F_SETFL,0));    
     }    
     //测试是否为终端设备        
-    if(0 == isatty(STDIN_FILENO))    
+    //if(0 == isatty(STDIN_FILENO))  
+    if(0 == isatty(fd))    
     {    
         printf("standard input is not a terminal device\n");    
         return(FALSE);    
     }    
     else    
-    {    
+    {
         printf("isatty success!\n");    
-    }                  
-    printf("fd->open=%d\n",fd);    
-    return fd;    
+    }
+
+    printf("fd->open=%d\n", fd);    
+    return fd;
 }    
 /*******************************************************************  
 *名称：             UART0_Close  

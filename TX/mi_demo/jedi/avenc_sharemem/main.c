@@ -2165,14 +2165,11 @@ static int init_system(void)
     init_pre_venc();
 }
 
-
-
 static deinit_pre_venc()
 {
     Vif_deinit();
     vpe_deinit();
 }
-
 
 #if 1
 int main(int argc, char **argv)

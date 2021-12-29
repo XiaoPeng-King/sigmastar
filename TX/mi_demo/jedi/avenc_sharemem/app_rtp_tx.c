@@ -23,6 +23,7 @@
 #include "crc.h"
 #include "sharemem.h"
 #include "hdmi_info.h"
+#include "gpio.h"
 
 #define NO_SIGNAL	"check hdmi signal"
 #define CANT_SUPPORT 	"can't support the signal"
@@ -127,6 +128,7 @@ ReSocket:
 		//printf("-----g_HDMI_STATE: %d ------\n", g_HDMI_STATE);
 		if (0 < g_HDMI_STATE)
 		{
+			hdmi_light_turn_off();
 			timeOut++;
 			bzero(pCheck, sizeof(pCheck));
 			
@@ -144,6 +146,7 @@ ReSocket:
 		}
 		else
 		{
+			hdmi_light_turn_on();
 			timeOut = 0;
 		}
 #endif

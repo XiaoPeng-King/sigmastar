@@ -22,10 +22,18 @@
 #define HIGH 1
 #define LOW 0
 
-
 static void create_gpio(unsigned char gpio_num)
 {
 	char cmd[50] = {};
+	char detect[50] = {};
+
+	sprintf(detect, "/sys/class/gpio/gpio%d", gpio_num);
+	if (0 == IsExistent(detect))
+	{
+		printf("%s has been \n", detect);
+		return 0;
+	}
+
 	sprintf(cmd, "echo %d > /sys/class/gpio/export", gpio_num);
 	printf(cmd);
 	system(cmd);
@@ -231,15 +239,38 @@ char get_key_value()
 	return value;
 }
 
+static void create_cec_5v()
+{
+	create_gpio(CEC_5V);
+	return;
+}
+
+void cec_enable()
+{
+	create_gpio(CEC_5V);
+	set_gpio_state(CEC_5V, OUTPUT);
+	set_gpio_value(CEC_5V, HIGH);
+}
+
+void cec_disenable()
+{
+	create_gpio(CEC_5V);
+	set_gpio_state(CEC_5V, OUTPUT);
+	set_gpio_value(CEC_5V, LOW);
+}
+
 void init_gpio()
 {
 	create_sw_gpio();
+	create_cec_5v();
+	cec_enable();
 	create_key();
 	eeprom_lock_init();
 	set_sw_input();
 	set_key_input();
 	detect_sw_id();
 }
+
 
 
 

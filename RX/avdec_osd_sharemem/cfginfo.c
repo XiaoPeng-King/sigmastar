@@ -57,7 +57,7 @@ int AppInitCfgInfoDefault(void)
     strcpy(share_mem->sm_run_status.strSoftwareVer, SW_VERSION);
     
     //ETH
-    strcpy(share_mem->sm_eth_setting.strEthIp,"192.168.36.6");
+    strcpy(share_mem->sm_eth_setting.strEthIp,"192.168.36.128");
     strcpy(share_mem->sm_eth_setting.strEthMask,"255.255.255.0");
     strcpy(share_mem->sm_eth_setting.strEthGateway,"192.168.36.3");        
     strcpy(share_mem->sm_eth_setting.strEthMulticast,"239.255.42.1");
@@ -122,8 +122,9 @@ int AppWriteCfgInfotoFile(void)
 {
     printf("\n-------AppWriteCfgInfotoFile----------\n");
 #ifdef CONFIG_EEPROM
-    if (1 == g_system_attr.e2prom)
+    if (TRUE == g_system_attr.e2prom)
     {
+        printf("EEPROM write start \n");
         WriteConfigIntoE2prom(share_mem);
         return 0;
     }

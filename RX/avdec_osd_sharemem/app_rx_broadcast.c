@@ -12,12 +12,13 @@
 #include "app_rx_broadcast.h"
 #include "sharemem.h"
 #include "init_net.h"
-//#include "app_rx_io_ctl.h"
+#include "uart_cec.h"
 #include "main.h"
 
 extern SYSTEM_ATTR_s g_system_attr;
 
 #define DEBUG
+#define CEC_ENABLE
 
 #if 1
 static int get_random(void)
@@ -277,6 +278,7 @@ try_socket:
 				if (len > 0)
 				{
 					printf(" recive_cmd : %s ,and len : %d\n\n",recive_cmd,len);
+
 					#ifdef DEBUG
 					printf("cmd[0]: 0x%x \n", recive_cmd[0]); //data head 0xfe
 					printf("cmd[1]: %d \n", recive_cmd[1]); //data type
@@ -284,8 +286,8 @@ try_socket:
 					printf("cmd[3]: %d \n", recive_cmd[3]); //
 					printf("cmd[4]: %d \n", recive_cmd[4]); //
 					printf("cmd[5]: %d \n", recive_cmd[5]); //
-
 					#endif
+
 					if (recive_cmd[0] != 0xfe)
 					{
 						continue;
@@ -438,7 +440,6 @@ try_socket:
 			}
 		}
 	}
-	
 	close(sockfd);
 	
 	return 0;

@@ -16,7 +16,12 @@
 #define SW_2    3 //GPIO_3
 #define SW_3    6 //GPIO_6
 #define SW_4    5 //GPIO_5
-#define SW_5    9 //GPIO_9
+#define SW_5    69 //SW_PM_GPIO_9
+
+#define LED_HDMI    65
+
+#define HIGH    1
+#define LOW     0
 
 
 typedef enum
@@ -27,7 +32,6 @@ typedef enum
     SW_GPIO_5,
     SW_GPIO_6,
     SW_GPIO_7,
-    SW_GPIO_9 = 9,
     SW_PM_GPIO_0=62,
     SW_PM_GPIO_1=63,
     SW_PM_GPIO_3=65,
@@ -45,7 +49,7 @@ static char get_gpio_value(const unsigned char gpio)
     char value = -1;
     int fd_gpio = -1;
     reg_cmd_t gpio_info;
-#if 1
+#if 0
     if((gpio > 9 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
     {
         printf("get gpio error ,gpio is <2-7/62/63/65/69> \n");
@@ -79,13 +83,13 @@ static int set_gpio_value(const unsigned char gpio, unsigned char value)
 {
     int fd_gpio = -1;
     reg_cmd_t gpio_info;
-
-     if((gpio > 9 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
+#if 0
+    if((gpio > 9 && gpio < 62) || gpio > 69 || gpio < 2 || gpio == 64 || gpio == 66 || gpio == 67|| gpio == 68)
     {
         printf("get gpio error ,gpio is <2-7/62/63/65/69> \n");
         return -1;
     }
-
+#endif
     fd_gpio = open("/dev/SW_IP", O_RDWR);
     if (fd_gpio < 0)
     {
@@ -95,7 +99,7 @@ static int set_gpio_value(const unsigned char gpio, unsigned char value)
 
     memset(&gpio_info,0,sizeof(reg_cmd_t));
     gpio_info.gpio=gpio;
-    gpio_info.data=0;
+    gpio_info.data = value;
 
     if(value < 0 || value > 1)
     {
@@ -107,7 +111,6 @@ static int set_gpio_value(const unsigned char gpio, unsigned char value)
     ioctl(fd_gpio,SW_IP_WRITE,&gpio_info);
     printf("write gpio %d = %d\n\n",gpio_info.gpio,gpio_info.data);
     
-    gpio_info.data = value;
     ioctl(fd_gpio,SW_IP_SET_OUT,&gpio_info);
     printf("set gpio out, gpio[%d] = %d\n\n",gpio_info.gpio,gpio_info.data);
     
@@ -232,7 +235,6 @@ int main(int argc,char* argv[])
 }
 #endif
 
-
 static char detect_sw_id(void)
 {
 	char id = 0;
@@ -240,20 +242,24 @@ static char detect_sw_id(void)
 
     flag = get_gpio_value(SW_5);
 	id = (id | (flag << 0));
+    printf("detect sw id : 0x%x \n", id);
 
 	flag = get_gpio_value(SW_4);
 	id = (id | (flag << 1));
+    printf("detect sw id : 0x%x \n", id);
 
 	flag = get_gpio_value(SW_3);
 	id = (id | (flag << 2));
+    printf("detect sw id : 0x%x \n", id);
 
 	flag = get_gpio_value(SW_2);
 	id = (id | (flag << 3));
+    printf("detect sw id : 0x%x \n", id);
 
 	flag = get_gpio_value(SW_1);
 	id = (id | (flag << 4));
 
-	//printf("detect sw id : 0x%x \n", id);
+	printf("detect sw id : 0x%x \n", id);
 
 	return id;
 }
@@ -279,5 +285,13 @@ unsigned char IP_check(void)
     return ip+200;
 }
 
+void hdmi_light_turn_on()
+{
+    set_gpio_value(LED_HDMI, HIGH);
+}
 
+void hdmi_light_turn_off()
+{
+    set_gpio_value(LED_HDMI, LOW);
+}
 

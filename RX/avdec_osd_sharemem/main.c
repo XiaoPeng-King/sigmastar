@@ -29,7 +29,7 @@
 #include "app_rtp.h"
 
 #include "gpio.h"
-#include "uart.h"
+#include "uart_watchdog.h"
 #include "watchdog.h"
 #include "sstardisp.h"
 #include "app_osd.h"
@@ -39,6 +39,8 @@
 #include "app_igmp.h"
 #include "init_net.h"
 #include "main.h"
+#include "uart_cec.h"
+
 
 
 #define STCHECKRESULT(result)\
@@ -85,7 +87,7 @@ SYSTEM_ATTR_s g_system_attr = {
 	.serverip = "192.168.36.1",
 	.display_flag = TRUE,
 	.multicast_change_flag = FALSE,
-	.e2prom = FALSE,
+	.e2prom = TRUE,
 };
 
 
@@ -891,9 +893,11 @@ static int set_parameter(void)
 static int init_system(void)
 {
     init_gpio();
-    InitShareMem();
     sstar_vdec_init(); //vdec init   
     sstar_ao_init(); //
+    sleep(1);
+    InitShareMem();
+    //while(1) sleep(3);  
     init_eth();
     sleep(1);
 }
@@ -926,7 +930,7 @@ int main (int argc, char **argv)
 
     CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
     CreateThread(&switch_ip_handle, NULL, switch_ip, NULL);
-    CreateThread(&uart_watchdog_handle, NULL, uart_main, NULL);
+    CreateThread(&uart_watchdog_handle, NULL, uart_watchdog_main, NULL);
     CreateThread(&sharemem_main_handle, NULL, sharemem_handle, NULL);
     CreateThread(&rtp_main_handle, NULL, app_rtp_main, NULL);
     CreateThread(&IP_broadcast_recive_handle, NULL, IP_broadcast_recive, NULL);
@@ -983,8 +987,11 @@ int main (int argc, char **argv)
                 break;
         }
         //printf("");
-        sleep(1);
+        sleep(15);
         //printf("key : %d \n", get_key_value());
+        UART_CEC_TV_OFF();
+        sleep(15);
+        UART_CEC_TV_ON();
     }
 
     pthread_join(sharemem_main_handle, NULL);

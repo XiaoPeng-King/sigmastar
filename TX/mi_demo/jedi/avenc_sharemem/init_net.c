@@ -11,6 +11,7 @@ static void switch_ip(void)
 {
     char str[20] = {0};
     sprintf(str, "192.168.36.%d", IP_check());
+    sprintf(share_mem->sm_eth_setting.strEthMulticast, "239.255.42.%d", (IP_check()-200));
     printf("\n\n-------");
     printf(str);
     printf("---------\n\n");

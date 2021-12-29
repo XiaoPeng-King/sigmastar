@@ -15,7 +15,7 @@
 #include "linked_list.h"
 
 extern unsigned char g_Exit;
-#define DEBUG
+//#define DEBUG
 
 static unsigned char conflict_buf[128] = {0};
 

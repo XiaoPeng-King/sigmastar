@@ -9,7 +9,6 @@
 
 #include "gpio.h"
 
-
 #define MUL_ADDRESS		"route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0"
 #define DEFAULT_ROUTE 	"route add default gw 192.168.36.1"
 

@@ -4,10 +4,12 @@
 
 int uart_main(void)
 {
+    printf("\n\n-----------------init uart watchdog-----------------\n\n");
+    int ret = 0;
     int usart_id=1;
     char usart_dev[32]={0};
     int usart_fd=-1;
-    char buf[]={"hello world!!!"};
+    char buf[]={"A"};
     //int len=0;
 #if 0
     if(argc < 2)
@@ -33,27 +35,30 @@ int uart_main(void)
     {
         return 0;
     }
-    usart_fd=UART0_Open(usart_fd,usart_dev);
-    if(usart_fd<0)
+    usart_fd = UART0_Open(usart_dev);
+    if(usart_fd < 0)
     {
-        printf("open %s if failed!!!\n",usart_dev);
+        printf("open %s is failed!!!\n",usart_dev);
         return -1;
     }
-    printf("open %s if ok!!!\n",usart_dev);
-    if(UART0_Init(usart_fd, 115200,0,8,1,'N')== FALSE)
+    printf("usart fd = %d \n", usart_fd);
+    printf("open %s is ok!!!\n",usart_dev);
+
+    if(UART0_Init(usart_fd, 9600,0,8,1,'N')== FALSE)
     {
-        printf("init %s if failed!!!\n",usart_dev);
+        printf("init %s is failed!!!\n",usart_dev);
         return -1;
     }
-    printf("init %s if ok!!!\n",usart_dev);
+    printf("init %s is ok!!!\n",usart_dev);
+
     while(1)
     {
         if(UART0_Send(usart_fd,buf,strlen(buf))==FALSE)
         {
-            printf("usart send %s if failed!!!\n",usart_dev);
+            printf("usart send %s is failed!!!\n",usart_dev);
             return -1;
         }
-        //printf("send %s is ok\n",buf);
+        //printf("\n\n-----------------uart watchdog send %s ok-----------------\n\n",buf);
         sleep(1);
     }
     UART0_Close(usart_fd);

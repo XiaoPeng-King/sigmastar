@@ -9,7 +9,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <termios.h>
 #include <stdlib.h>
  
 int set_opt(int fd,int nSpeed, int nBits, char nEvent, int nStop)
@@ -160,21 +159,20 @@ int open_port(int fd,int comport)
     return fd;
 }
 
-int uart_main(void)
+int uart_write(unsigned char uart_port, unsigned int bitrate, char *pbuffer, unsigned char buffer_len)
 {
     int fd;
-    int nread, nwrite, i;
+    int nwrite, i;
     unsigned int ispeed,ospeed;
-    char write_buff[8]="A";
-	char read_buff[8]="";
+
     struct termios tmptio;
  
-    if((fd=open_port(fd,2))<0)
+    if((fd=open_port(fd,uart_port))<0)
     {
         perror("open_port error");
         return;
     }
-    if((i=set_opt(fd,9600,8,'N',1))<0)
+    if((i=set_opt(fd, bitrate, 8, 'N', 1))<0)
     {
         perror("set_opt error");
         return;
@@ -190,16 +188,45 @@ int uart_main(void)
 
 	printf("ospeed: %d,ispeed: %d\n",ospeed,ispeed);
 
-	while (1)
-	{
-		nwrite=write(fd,write_buff,8);
-        //printf("nwrite=%d,%s\n",nwrite,write_buff);
+    nwrite = write(fd, pbuffer, buffer_len);
+    printf("nwrite=%d,%s\n", nwrite, pbuffer);
+    close(fd);
 
-        nread=read(fd,read_buff,8);
-        //printf("nread=%d,%s\n",nread,read_buff);
-        sleep(1);
+    return;
+}
+
+int uart_read(unsigned char uart_port, unsigned int bitrate, char *pbuffer, unsigned char buffer_len)
+{
+    int fd;
+    int nread, i;
+    unsigned int ispeed,ospeed;
+
+    struct termios tmptio;
+ 
+    if((fd=open_port(fd,uart_port))<0)
+    {
+        perror("open_port error");
+        return;
+    }
+    if((i=set_opt(fd, bitrate, 8, 'N', 1))<0)
+    {
+        perror("set_opt error");
+        return;
+    }
+
+	if(tcgetattr(fd,&tmptio)  !=  0) 
+	{ 
+		perror("SetupSerial 1");
+		return -1;
 	}
-    
+	ospeed = cfgetospeed(&tmptio);
+	ispeed = cfgetispeed(&tmptio);
+
+	printf("ospeed: %d,ispeed: %d\n",ospeed,ispeed);
+
+    //nwrite = write(fd, pbuffer, buffer_len);
+    nread = read(fd, pbuffer, buffer_len);
+    printf("nwrite=%d,%s\n", nread, pbuffer);
     close(fd);
 
     return;

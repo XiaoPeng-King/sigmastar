@@ -33,7 +33,7 @@ int InitShareMem(void)
 	{
 		AppInitCfgInfoDefault();
 		g_system_attr.e2prom = 0;
-		//printf("\n\n*****e2prom read error*****\n\n");
+		printf("\n\n***** e2prom read failed *****\n\n");
 		ret = AppInitCfgInfoFromFile(&fd_config); //reinit share memory form file
 		if (ret < 0) 
 		{
@@ -101,7 +101,7 @@ void *sharemem_handle(void *arg)
 				//UART_CEC_TV_OFF();
 			}
 			share_mem->cec_control.cec_state = 0;
-			//AppWriteCfgInfotoFile();
+			AppWriteCfgInfotoFile();
 			share_mem->ucUpdateFlag = 0;
 			printf("\n\nweb end \n\n");
 		}

@@ -165,14 +165,18 @@ int i2c_bytes_read(int fd, unsigned char slave_addr, unsigned char reg_addr, uns
     packets.msgs = messages;
     packets.nmsgs = 2;
 
-    printf("----------------test point 2----------------\n");
-    printf("fd : %d , slave addr : %x, reg add : %x, len : %d, pdata : %x\n", fd, slave_addr, reg_addr, len, pdata);
-    if(ioctl(fd, I2C_RDWR, &packets) < 0)
+    //printf("----------------test point 2----------------\n");
+    
+    if (ioctl(fd, I2C_RDWR, &packets) < 0)
     {
         perror("Unable to send data");
         return -1;
     }
-
+    printf("fd : %d , slave addr : %x, reg add : %x, len : %d, *pdata : %x\n", fd, slave_addr, reg_addr, len, *pdata);
+    if (0xff == *pdata) //firse read EEPROM
+    {
+        return -2;
+    }
     return 0;
 }
 

@@ -20,7 +20,7 @@
 //宏定义    
 #define FALSE  -1    
 #define TRUE   0
-int UART0_Open(int fd,char*port);
+int UART0_Open(char *port);
 void UART0_Close(int fd) ; 
 int UART0_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity);
 int UART0_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity) ;

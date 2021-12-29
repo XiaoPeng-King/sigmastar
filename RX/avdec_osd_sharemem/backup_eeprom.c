@@ -26,7 +26,7 @@ int InitShareMemFromE2prom(SHARE_MEM *pShareMemory)
 	pthread_mutex_lock(&mutex_iic);
 #endif
 	//SHARE_MEM *pRead = malloc(sizeof(SHARE_MEM) * sizeof(char));
-	printf("\n---------- eeprom read start ----------\n");
+	
 	printf("buffer size : %d \n", sizeof(SHARE_MEM));
     printf("uuid: %d \n", pShareMemory->uuid);
 	printf("ip : %s \n", pShareMemory->sm_eth_setting.strEthIp);
@@ -36,8 +36,6 @@ int InitShareMemFromE2prom(SHARE_MEM *pShareMemory)
     strcpy(new_strSoftwareVer,share_mem->sm_run_status.strSoftwareVer);
 	
 	printf("new_soft: %s\n",share_mem->sm_run_status.strSoftwareVer);
-    
-	//ret = i2c_write_within_chip(0x00, pShareMemory, sizeof(SHARE_MEM));
     
 	sleep(1);
 	
@@ -74,7 +72,12 @@ int InitShareMemFromE2prom(SHARE_MEM *pShareMemory)
 	}
 	else
 	{
-		printf("\n---------- eeprom read error ----------\n");
+		if (-2 == ret) //first read eeprom
+		{
+			printf("first read eeprom\n");
+			i2c_write_within_chip(0x00, pShareMemory, sizeof(SHARE_MEM));
+		}
+		printf("\n---------- eeprom read failed ----------\n");
 		ret = -1;
 	}
 #ifdef MUTEX_IIC

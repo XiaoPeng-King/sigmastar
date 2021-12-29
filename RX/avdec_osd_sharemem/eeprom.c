@@ -12,7 +12,10 @@
 #include "eeprom.h"
 
 #define FILE_NAME "/dev/i2c-0"
+#define HIGH	1
+#define LOW		0
 
+#define A2	LOW
 /******************24C08 address space***********************/
 //deivce	A2 pin	block	r/w		address
 //1010 		1 		00 		1/0 	0-255
@@ -23,11 +26,19 @@
 
 //一个block是256bit
 //注意：读写标记位我们的IIC控制器自己会添加，因此，我们实际的地址是7位
+#if A2
+
+#define ADDRESS_BLOCK_1		0x54	//0 1010	1	00 
+#define ADDRESS_BLOCK_2		0x55	//0 1010 	1	01 
+#define ADDRESS_BLOCK_3		0x56	//0 1010	1	10 
+#define ADDRESS_BLOCK_4		0x57	//0 1010	1 	11
+#else
 #define ADDRESS_BLOCK_1		0x50	//0 1010	0	00 
 #define ADDRESS_BLOCK_2		0x51	//0 1010 	0	01 
 #define ADDRESS_BLOCK_3		0x52	//0 1010	0	10 
 #define ADDRESS_BLOCK_4		0x53	//0 1010	0 	11 
-
+ 
+#endif
 
 /**
  * @brief 
@@ -138,10 +149,11 @@ int i2c_sequential_read(uint8_t ctrl_byte,uint8_t word_addr,uint16_t data_len,ui
 	}
 	else
 	{
-		printf("---------test point 1---------\n");
+		//printf("---------test point 1---------\n");
 		ret = i2c_bytes_read(iic_fd, ctrl_byte, word_addr, data_len, data_addr_in_master_mem);
+		printf("------------------------- ret : %d ---------------------\n", ret);
 	}
-	printf("ctrl_byte: %x, word_addr: %x, data_len: %d, data: %s \n", ctrl_byte, word_addr, data_len, *data_addr_in_master_mem);
+	//printf("ctrl_byte: %x, word_addr: %x, data_len: %d, data: %s \n", ctrl_byte, word_addr, data_len, *data_addr_in_master_mem);
 	
 	printf("i2c_sequential_read finished.\n");
 	return ret;
@@ -278,20 +290,20 @@ int i2c_write_within_chip(uint16_t address_in_chip,uint8_t *source_data_addr,uin
 
 int i2c_read_within_chip(uint16_t address_in_chip,uint8_t *data_addr_in_master_mem,uint16_t data_len)
 {
-	int ret = 0;
+	int ret = -1;
 	uint16_t block_size = 0x100; //256
 	uint8_t extra_block = 0;
 	uint8_t i = 0;
 	
 	addr_ctrl_byte_struct Scb;
 	Scb = get_eigenbytes(address_in_chip);
-	printf("Scb : %x \n", Scb);
+	//printf("Scb : %x \n", Scb);
 	uint8_t ctrl_byte = Scb.ctrl_byte;
 	uint8_t word_addr = Scb.word_addr;
 	uint8_t left_block_num = 4 - ((ctrl_byte & 0x06) >> 1);
 	uint16_t total_mem_left = 1024-256*(4-left_block_num)-word_addr;
 	uint16_t current_block_mem_left = block_size-word_addr;
-	
+	printf("\n---------- eeprom read start ----------\n");
 	// do not beyond current block
 	if ((word_addr+data_len) <= block_size)
 	{
