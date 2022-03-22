@@ -289,7 +289,9 @@ ReSocket:
 			}
 			len = SendToDestAddr(sock_cli, pStream, tmp_len, 0, (struct sockaddr *)&server_addr, sizeof(server_addr));
 			//WritePCMToFile(pStream, tmp_len, 1, pcmfp);
+			continue;
 		} /*end of audio judge*/
+		usleep(1000);
 #endif
 	} //end of while (1)
 

@@ -29,7 +29,7 @@ arm-linux-gnueabihf-9.1.0-gcc -o infoDisplay.cgi infoDisplay.c
 
 #upload
 arm-linux-gnueabihf-9.1.0-gcc -o upload_web.cgi upload_web.c
-arm-linux-gnueabihf-9.1.0-gcc -o upload_ko.cgi upload_ko.c
+#arm-linux-gnueabihf-9.1.0-gcc -o upload_ko.cgi upload_ko.c
 
 #main.html
 arm-linux-gnueabihf-9.1.0-gcc -o onloading.cgi onloading.c

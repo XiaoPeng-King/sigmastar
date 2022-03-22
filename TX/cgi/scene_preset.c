@@ -5,11 +5,11 @@
 #include "Setting.h"
 #include "sharemem.h"
 
-#define CMD1	"/bin/cp /tmp/configs/config6.conf /tmp/configs/config1.conf"
-#define CMD2	"/bin/cp /tmp/configs/config6.conf /tmp/configs/config2.conf"
-#define CMD3	"/bin/cp /tmp/configs/config6.conf /tmp/configs/config3.conf"
-#define CMD4	"/bin/cp /tmp/configs/config6.conf /tmp/configs/config4.conf"
-#define CMD5	"/bin/cp /tmp/configs/config6.conf /tmp/configs/config5.conf"
+#define CMD1	"/bin/cp /customer/configs/config6.conf /customer/configs/config1.conf"
+#define CMD2	"/bin/cp /customer/configs/config6.conf /customer/configs/config2.conf"
+#define CMD3	"/bin/cp /customer/configs/config6.conf /customer/configs/config3.conf"
+#define CMD4	"/bin/cp /customer/configs/config6.conf /customer/configs/config4.conf"
+#define CMD5	"/bin/cp /customer/configs/config6.conf /customer/configs/config5.conf"
 
 int InitShareMem(void)
 {

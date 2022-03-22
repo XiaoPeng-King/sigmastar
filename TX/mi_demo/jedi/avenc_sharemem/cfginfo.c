@@ -17,8 +17,7 @@
 #include "cfginfo.h"
 #include "Setting.h"
 #include "sharemem.h"
-
-//#define CONFIG_FILE ("/user/configs/config.conf")
+#include "version.h"
 
 int AppInitCfgInfoDefault(void)
 {

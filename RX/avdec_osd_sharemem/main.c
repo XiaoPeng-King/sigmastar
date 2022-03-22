@@ -40,8 +40,9 @@
 #include "init_net.h"
 #include "main.h"
 #include "uart_cec.h"
-
-
+//#include "cec_iic.h"
+#include "digit_led.h"
+#include "version.h"
 
 #define STCHECKRESULT(result)\
     if (result != MI_SUCCESS)\
@@ -89,7 +90,6 @@ SYSTEM_ATTR_s g_system_attr = {
 	.multicast_change_flag = FALSE,
 	.e2prom = TRUE,
 };
-
 
 typedef struct WAVE_FORMAT
 {
@@ -897,9 +897,40 @@ static int init_system(void)
     sstar_ao_init(); //
     sleep(1);
     InitShareMem();
-    //while(1) sleep(3);  
+    //while(1) sleep(3);
     init_eth();
     sleep(1);
+}
+
+char string[100] = {};
+
+void display_searching_tx()
+{
+    sprintf(string, "ID-%s: is searching TX-%s device!", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
+    osd_display(20, 20, string);
+    printf(string);
+}
+
+void display_check_hdmi()
+{
+    sprintf(string, "ID-%s: is checking TX-%s HDMI signal!", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
+    osd_display(20, 20, string);
+    printf(string);
+}
+
+void display_info()
+{
+    sprintf(string, "IP : %s MULTICAST : %s", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
+    osd_display(20, 20, string);
+    printf(string);
+
+}
+
+void display_conflict()
+{
+    sprintf(string, "ID-%s: is conflicting", share_mem->sm_eth_setting.strEthIp);
+    osd_display(20, 20, string);
+    printf(string);
 }
 
 int main (int argc, char **argv)
@@ -912,6 +943,7 @@ int main (int argc, char **argv)
     pthread_t IP_broadcast_recive_handle;
     pthread_t IP_broadcast_report_handle;
     pthread_t IGMP_report_handle;
+    pthread_t digit_led_handle;
 
     MI_DISP_PubAttr_t stDispPubAttr;
     
@@ -929,18 +961,32 @@ int main (int argc, char **argv)
     logo_display();
 
     CreateThread(&watchdog_handle, NULL, watchdog_main, NULL);
+    #ifdef SW_KEY
     CreateThread(&switch_ip_handle, NULL, switch_ip, NULL);
+    #endif
     CreateThread(&uart_watchdog_handle, NULL, uart_watchdog_main, NULL);
     CreateThread(&sharemem_main_handle, NULL, sharemem_handle, NULL);
     CreateThread(&rtp_main_handle, NULL, app_rtp_main, NULL);
     CreateThread(&IP_broadcast_recive_handle, NULL, IP_broadcast_recive, NULL);
     CreateThread(&IP_broadcast_report_handle, NULL, IP_broadcast_report, NULL);
     CreateThread(&IGMP_report_handle, NULL, app_igmp_report, NULL);
+    #ifdef DIGIT_LED
+    CreateThread(&digit_led_handle, NULL, digit_led_main, NULL);
+    #endif
     
-    char string[100] = {};
     osd_disable();
     while (1)
     {
+        #if 0
+        sleep(15);
+        UART_CEC_TV_OFF();
+        //UART_CEC_TV_OFF();
+        sleep(15);
+        UART_CEC_TV_ON();
+        //UART_CEC_TV_ON();
+        #endif
+#if 1
+        sleep(1);
         //printf("g_system_attr.display_state.signal_state: %d \n", g_system_attr.display_state.signal_state);
         switch (g_system_attr.display_state.signal_state)
         {
@@ -949,15 +995,11 @@ int main (int argc, char **argv)
                 switch (g_system_attr.display_state.signal_abnormal)
                 {
                     case EN_NO_HDMI:
-                        sprintf(string, "ID-%s: is checking TX-%s HDMI signal!", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
-                        osd_display(20, 20, string);
-                        printf(string);
+                        display_check_hdmi();
                         break;
 
                     case EN_NO_TX:
-                        sprintf(string, "ID-%s: is searching TX-%s device!", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
-                        osd_display(20, 20, string);
-                        printf(string);
+                        display_searching_tx();
                         break;
                 }
                 break;
@@ -967,31 +1009,22 @@ int main (int argc, char **argv)
                 switch (g_system_attr.display_state.signal_normal)
                 {
                     case EN_IP_CONFLICT:
-                        sprintf(string, "ID-%s: is conflicting", share_mem->sm_eth_setting.strEthIp);
-                        osd_display(20, 20, string);
-                        printf(string);
+                        display_conflict();
                         break;
                     
                     case EN_INFO_DIAPLAY:
-                        sprintf(string, "IP : %s MULTICAST : %s", share_mem->sm_eth_setting.strEthIp, share_mem->sm_eth_setting.strEthMulticast);
-                        printf(string);
-                        osd_display(20, 20, string);
+                        display_info();
                         break;
                     
                     case EN_CLOSE_DISPLAY:
-                        
                         osd_disable();
                         break;
                 }
                
                 break;
         }
-        //printf("");
-        sleep(15);
+        #endif
         //printf("key : %d \n", get_key_value());
-        UART_CEC_TV_OFF();
-        sleep(15);
-        UART_CEC_TV_ON();
     }
 
     pthread_join(sharemem_main_handle, NULL);

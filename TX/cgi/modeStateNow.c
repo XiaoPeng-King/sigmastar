@@ -5,16 +5,16 @@
 #include "Setting.h"
 #include "sharemem.h"
 
-#define CMD1	"/bin/cp /tmp/configs/config1.conf /tmp/configs/config.conf"
-#define CMD2	"/bin/cp /tmp/configs/config2.conf /tmp/configs/config.conf"
-#define CMD3	"/bin/cp /tmp/configs/config3.conf /tmp/configs/config.conf"
-#define CMD4	"/bin/cp /tmp/configs/config4.conf /tmp/configs/config.conf"
-#define CMD5	"/bin/cp /tmp/configs/config5.conf /tmp/configs/config.conf"
-#define CMD6	"/bin/cp /tmp/configs/config6.conf /tmp/configs/config.conf"
-#define CMD7	"/bin/cp /tmp/configs/config7.conf /tmp/configs/config.conf"
-#define CMD8	"/bin/cp /tmp/configs/config8.conf /tmp/configs/config.conf"
-#define CMD9	"/bin/cp /tmp/configs/config9.conf /tmp/configs/config.conf"
-#define CMD10	"/bin/cp /tmp/configs/config10.conf /tmp/configs/config.conf"
+#define CMD1	"/bin/cp /customer/configs/config1.conf /customer/configs/config.conf"
+#define CMD2	"/bin/cp /customer/configs/config2.conf /customer/configs/config.conf"
+#define CMD3	"/bin/cp /customer/configs/config3.conf /customer/configs/config.conf"
+#define CMD4	"/bin/cp /customer/configs/config4.conf /customer/configs/config.conf"
+#define CMD5	"/bin/cp /customer/configs/config5.conf /customer/configs/config.conf"
+#define CMD6	"/bin/cp /customer/configs/config6.conf /customer/configs/config.conf"
+#define CMD7	"/bin/cp /customer/configs/config7.conf /customer/configs/config.conf"
+#define CMD8	"/bin/cp /customer/configs/config8.conf /customer/configs/config.conf"
+#define CMD9	"/bin/cp /customer/configs/config9.conf /customer/configs/config.conf"
+#define CMD10	"/bin/cp /customer/configs/config10.conf /customer/configs/config.conf"
 
 int InitShareMem(void)
 {
@@ -73,7 +73,7 @@ void main(void)
     {
 		case 1:
 			system(CMD1);
-			//system("/bin/cp /tmp/configs/config1.conf /tmp/configs/config.conf");
+			//system("/bin/cp /customer/configs/config1.conf /customer/configs/config.conf");
 			//printf("CMD1");
 			break;	
 		case 2:

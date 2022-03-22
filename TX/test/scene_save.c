@@ -1,9 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
-#include "Setting.h"
-#include "sharemem.h"
 
 #define CMD0	"/bin/cp /customer/configs/config.conf /customer/configs/config0.conf"
 #define CMD1	"/bin/cp /customer/configs/config.conf /customer/configs/config1.conf"
@@ -17,57 +13,50 @@
 #define CMD9	"/bin/cp /customer/configs/config.conf /customer/configs/config9.conf"
 #define CMD10	"/bin/cp /customer/configs/config.conf /customer/configs/config10.conf"
 
-int InitShareMem(void)
+int main(void)
 {
-	int shmid;
-
-	shmid = shmget((key_t)1234, sizeof(SHARE_MEM), 0666|IPC_CREAT);	
-	if(shmid == -1)  
-	{  
-	//printf("shmget failed\n");  
-        printf("fail \n");
-		exit(0);
-	}  
-
-	share_mem = shmat(shmid, (void*)0, 0);  
-	if(share_mem == NULL)  
-	{ 
-		//printf("shmat failed\n");	
-        printf("fail \n");
-		exit(0);  
-	}
-	//printf("Memory attached at %X\n", (int)share_mem);  
-
-    //share_mem->sm_eth_setting = eth_setting;
-}
-
-void main(void)
-{
-    char *data;
-    //char strTemp[25] = {0};
+	char *data = NULL;
 	char strNum[10] = {0};
-	char num;
-    
-	InitShareMem();
+	//char strNum;
+	char num = -1;
+	//FILE * fp = 0;
+	//char strTemp[10] = {0};
+	
 	printf("Content-Type:text/html\n\n");
+#if 1
     data = getenv("QUERY_STRING");
-    
+    printf(data);
+	#if 0
     if(NULL==data)
     {
         printf("Parameter Error \n");
         exit(0);
     }
-    
-    sscanf(data,"%*[^:]:%[^&]", strNum);
-    
-    //printf("num: %s str: %s \n", strNum, strTemp);
-    num = atoi(strNum);
-    	
-	switch (num)
+    #endif
+
+    //sscanf(data,"%*[^=]=%[^&]", strNum);
+    //num = atoi(strNum);
+	num = 3; //test
+    //printf("%d", num);
+     
+    //printf("%c", strNum);
+    switch (num)
     {
+		case 0:
+			/*
+			fp = popen(CMD1, "r");
+			if(fp == NULL){
+				printf("set scene file...\n");
+				pclose(fp);
+				return -1;
+			}
+			pclose(fp);
+			*/
+			system(CMD0);
+			break;
 		case 1:
 			system(CMD1);
-			break;	
+			break;
 		case 2:
 			system(CMD2);
 			break;
@@ -82,7 +71,7 @@ void main(void)
 			break;
 		case 6:
 			system(CMD6);
-			break;	
+			break;
 		case 7:
 			system(CMD7);
 			break;
@@ -99,9 +88,10 @@ void main(void)
 			printf("error");
 			break;
 	}
-	
-	usleep(1000);
-	share_mem->ucModeApplyFlag = 1;	
-	printf("succeed");
-}
+    
+    printf("succeed");
+    //InitShareMem();
+#endif
 
+	return 0;
+}

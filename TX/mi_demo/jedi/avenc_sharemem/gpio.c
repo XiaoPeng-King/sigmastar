@@ -23,7 +23,6 @@
 #define HIGH    1
 #define LOW     0
 
-
 typedef enum
 {
 	SW_GPIO_2 = 2,
@@ -67,10 +66,10 @@ static char get_gpio_value(const unsigned char gpio)
     gpio_info.data=0;
 
     ioctl(fd_gpio,SW_IP_SET_IN,&gpio_info);
-    printf("set gpio in, gpio[%d] = %d\n\n",gpio_info.gpio,gpio_info.data);
+    //printf("set gpio in, gpio[%d] = %d\n\n",gpio_info.gpio,gpio_info.data);
 
     ioctl(fd_gpio,SW_IP_READ,&gpio_info);
-    printf("read gpio %d = %d\n\n",gpio_info.gpio,gpio_info.data);
+    //printf("read gpio %d = %d\n\n",gpio_info.gpio,gpio_info.data);
 
     value = gpio_info.data;
 
@@ -109,14 +108,98 @@ static int set_gpio_value(const unsigned char gpio, unsigned char value)
     }
 
     ioctl(fd_gpio,SW_IP_WRITE,&gpio_info);
-    printf("write gpio %d = %d\n\n",gpio_info.gpio,gpio_info.data);
+    //printf("write gpio %d = %d\n\n",gpio_info.gpio,gpio_info.data);
     
     ioctl(fd_gpio,SW_IP_SET_OUT,&gpio_info);
-    printf("set gpio out, gpio[%d] = %d\n\n",gpio_info.gpio,gpio_info.data);
+    //printf("set gpio out, gpio[%d] = %d\n\n",gpio_info.gpio,gpio_info.data);
     
     close(fd_gpio);
     return 0;
 }
+
+
+static char detect_sw_id(void)
+{
+	char id = 0;
+	char flag = 0;
+
+    flag = get_gpio_value(SW_5);
+	id = (id | (flag << 0));
+    printf("detect sw id : 0x%x \n", id);
+
+	flag = get_gpio_value(SW_4);
+	id = (id | (flag << 1));
+    printf("detect sw id : 0x%x \n", id);
+
+	flag = get_gpio_value(SW_3);
+	id = (id | (flag << 2));
+    printf("detect sw id : 0x%x \n", id);
+
+	flag = get_gpio_value(SW_2);
+	id = (id | (flag << 3));
+    printf("detect sw id : 0x%x \n", id);
+
+	flag = get_gpio_value(SW_1);
+	id = (id | (flag << 4));
+
+	printf("detect sw id : 0x%x \n", id);
+
+	return id;
+}
+
+unsigned char IP_check(void)
+{
+    int ip = 0, temp = -1;
+
+    while (1)
+    {
+        ip = detect_sw_id();
+        if (ip != temp)
+        {
+            temp = ip;
+        }
+        else
+        {
+            sleep(1);
+            printf("ip : %d \n", ip);
+            break;
+        }
+    }
+    return ip+200;
+}
+
+char hdmi_state = 0;
+
+void hdmi_light_turn_on()
+{
+    if (0 == hdmi_state)
+    {
+        hdmi_state = 1;
+        set_gpio_value(LED_HDMI, LOW);
+    }
+    
+    return ;
+}
+
+void hdmi_light_turn_off()
+{
+    if (1 == hdmi_state)
+    {
+        hdmi_state = 0;
+        set_gpio_value(LED_HDMI, HIGH);
+    }
+    
+    return ;
+}
+
+void gpio_init()
+{
+    hdmi_state = 0;
+    set_gpio_value(LED_HDMI, HIGH); //off led of hdmi
+    
+    return ;
+}
+
 
 #if 0
 int main(int argc,char* argv[])
@@ -234,64 +317,3 @@ int main(int argc,char* argv[])
     return 0;
 }
 #endif
-
-static char detect_sw_id(void)
-{
-	char id = 0;
-	char flag = 0;
-
-    flag = get_gpio_value(SW_5);
-	id = (id | (flag << 0));
-    printf("detect sw id : 0x%x \n", id);
-
-	flag = get_gpio_value(SW_4);
-	id = (id | (flag << 1));
-    printf("detect sw id : 0x%x \n", id);
-
-	flag = get_gpio_value(SW_3);
-	id = (id | (flag << 2));
-    printf("detect sw id : 0x%x \n", id);
-
-	flag = get_gpio_value(SW_2);
-	id = (id | (flag << 3));
-    printf("detect sw id : 0x%x \n", id);
-
-	flag = get_gpio_value(SW_1);
-	id = (id | (flag << 4));
-
-	printf("detect sw id : 0x%x \n", id);
-
-	return id;
-}
-
-unsigned char IP_check(void)
-{
-    int ip = 0, temp = -1;
-
-    while (1)
-    {
-        ip = detect_sw_id();
-        if (ip != temp)
-        {
-            temp = ip;
-        }
-        else
-        {
-            sleep(1);
-            printf("ip : %d \n", ip);
-            break;
-        }
-    }
-    return ip+200;
-}
-
-void hdmi_light_turn_on()
-{
-    set_gpio_value(LED_HDMI, HIGH);
-}
-
-void hdmi_light_turn_off()
-{
-    set_gpio_value(LED_HDMI, LOW);
-}
-

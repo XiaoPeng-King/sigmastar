@@ -27,6 +27,7 @@ static void switch_ip(void)
 
 int init_eth(void)
 {
+    char tmp;
     char syscmd[200];
     
     switch_ip();
@@ -43,6 +44,12 @@ int init_eth(void)
     //multicast address configure
     system(MUL_ADDRESS);
     system(DEFAULT_ROUTE);
+
+    //
+    tmp = IP_check();
+    sprintf(syscmd, "ifconfig eth0 hw ether 00:AA:BB:CC:DD:%x", tmp);
+    system(syscmd);
+    printf(system);
     
     return 0;
 }

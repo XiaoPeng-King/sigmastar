@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "linux_common.h"
+#include "version.h"
+
+
 
 #define CEC_5V 			27
 
@@ -16,13 +19,17 @@
 
 #define KEY				26
 
+#define KEY_UP1			31
+#define KEY_UP2			30
+
+
 #define INPUT 1
 #define OUTPUT 0
 
 #define HIGH 1
 #define LOW 0
 
-static void create_gpio(unsigned char gpio_num)
+void create_gpio(unsigned char gpio_num)
 {
 	char cmd[50] = {};
 	char detect[50] = {};
@@ -40,7 +47,7 @@ static void create_gpio(unsigned char gpio_num)
 	return 0;
 }
 
-static void set_gpio_state(unsigned char gpio_num, unsigned char state)
+void set_gpio_state(unsigned char gpio_num, unsigned char state)
 {
 	char cmd[128] = {};
 	char path[64] = {};
@@ -75,7 +82,7 @@ static void set_gpio_state(unsigned char gpio_num, unsigned char state)
 	}
 }
 
-static char get_gpio_value(unsigned char gpio_num)
+char get_gpio_value(unsigned char gpio_num)
 {
 	char value[8] = {};
 	char path[64] = {};
@@ -108,7 +115,7 @@ static char get_gpio_value(unsigned char gpio_num)
 	}
 }
 
-static void set_gpio_value(unsigned char gpio_num, char value)
+void set_gpio_value(unsigned char gpio_num, char value)
 {
 	char path[64] = {};
 	FILE *pF = NULL;
@@ -157,6 +164,8 @@ void eeprom_on()
 	set_gpio_value(EEPROM_LOCK, LOW);
 	return ;
 }
+
+#ifdef SW_KEY
 
 //create gpio option dir
 static void create_sw_gpio()
@@ -216,6 +225,8 @@ char detect_sw_id()
 	return id;
 }
 
+#endif
+
 static void create_key()
 {
 	create_gpio(KEY);
@@ -238,6 +249,23 @@ char get_key_value()
 
 	return value;
 }
+void key_init()
+{
+	create_gpio(KEY_UP1);
+	create_gpio(KEY_UP2);
+	set_gpio_state(KEY_UP1, INPUT);
+	set_gpio_state(KEY_UP2, INPUT);
+}
+
+unsigned char get_up1_value()
+{
+	return get_gpio_value(KEY_UP1);
+}
+
+unsigned char get_up2_value()
+{
+	return get_gpio_value(KEY_UP2);
+}
 
 static void create_cec_5v()
 {
@@ -247,28 +275,28 @@ static void create_cec_5v()
 
 void cec_enable()
 {
-	create_gpio(CEC_5V);
 	set_gpio_state(CEC_5V, OUTPUT);
 	set_gpio_value(CEC_5V, HIGH);
 }
 
 void cec_disenable()
 {
-	create_gpio(CEC_5V);
 	set_gpio_state(CEC_5V, OUTPUT);
 	set_gpio_value(CEC_5V, LOW);
 }
 
 void init_gpio()
 {
-	create_sw_gpio();
-	create_cec_5v();
-	cec_enable();
 	create_key();
 	eeprom_lock_init();
+	#ifdef SW_KEY
+	create_sw_gpio();
 	set_sw_input();
-	set_key_input();
 	detect_sw_id();
+	create_cec_5v();
+	cec_enable();
+	#endif
+	set_key_input();
 }
 
 

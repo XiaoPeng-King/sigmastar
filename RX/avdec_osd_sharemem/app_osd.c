@@ -10,7 +10,8 @@
 #include "font_8x16.c"
 #include "main.h"
 
-extern SYSTEM_ATTR_s g_system_attr;
+//extern SYSTEM_ATTR_s g_system_attr;
+static char OSD_state = 1;
 
 int fd_fb;
 struct fb_var_screeninfo var;	/* Current var */
@@ -77,14 +78,11 @@ static void lcd_put_ascii(int x, int y, unsigned char c){
 
 int osd_disable(void)
 {
-	if (g_system_attr.display_flag == TRUE)
-	{
-		g_system_attr.display_flag = FALSE;
-	}
+	if (1 == OSD_state)
+		OSD_state = 0;
 	else
-	{
 		return 0;
-	}
+
 	printf("osd disable !\n");
 	fd_fb = open("/dev/fb0", O_RDWR);
 	if (fd_fb < 0){
@@ -114,19 +112,16 @@ int osd_disable(void)
 
 	munmap(fbmem , screen_size);
 	close(fd_fb);
-	return 0;	
+	return 0;
 }
 
 int osd_display(unsigned int x, unsigned int y, char *str)
 {
-	if (g_system_attr.display_flag == FALSE)
-	{
-		g_system_attr.display_flag = TRUE;
-	}
+	if (0 == OSD_state)
+		OSD_state = 1;
 	else
-	{
 		return 0;
-	}
+
 	printf("osd display : %s !\n", str);
 	fd_fb = open("/dev/fb0", O_RDWR);
 	if (fd_fb < 0){
@@ -168,5 +163,5 @@ int osd_display(unsigned int x, unsigned int y, char *str)
 	
 	munmap(fbmem , screen_size);
 	close(fd_fb);
-	return 0;	
+	return 0;
 }

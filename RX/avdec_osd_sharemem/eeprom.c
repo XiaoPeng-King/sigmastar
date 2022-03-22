@@ -95,12 +95,16 @@ static int iic_fd = -1;
 int init_eeprom()
 {
 	eeprom_on();
-	iic_fd = open(FILE_NAME ,O_RDWR);
-	if(iic_fd < 0)
+	if (iic_fd < 0)
 	{
-		perror("open /dev/i2c-1 failed\n");
-		return -1;
+		iic_fd = open(FILE_NAME ,O_RDWR);
+		if(iic_fd < 0)
+		{
+			perror("open /dev/i2c-0 failed\n");
+			return -1;
+		}
 	}
+
 	printf("iic fd = %d \n", iic_fd);
 
 	return 0;

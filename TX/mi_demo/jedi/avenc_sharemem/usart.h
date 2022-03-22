@@ -12,7 +12,7 @@
 #include<termios.h>    /*PPSIX 终端控制定义*/    
 #include<errno.h>      /*错误号定义*/    
 #include<string.h>    
-     
+
 #define UART_DEV_0 "/dev/ttyS0"
 #define UART_DEV_1 "/dev/ttyS1"
 #define UART_DEV_2 "/dev/ttyS2"
@@ -23,8 +23,8 @@
 int UART0_Open(char *port);
 void UART0_Close(int fd) ; 
 int UART0_Set(int fd,int speed,int flow_ctrl,int databits,int stopbits,int parity);
-int UART0_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity) ;
+int UART0_Init(int fd, int speed,int flow_ctrl,int databits,int stopbits,int parity);
 int UART0_Recv(int fd, char *rcv_buf,int data_len);
 int UART0_Send(int fd, char *send_buf,int data_len);
- 
+
 #endif

@@ -8,12 +8,15 @@
 #include <fcntl.h>
 
 #include "gpio.h"
+#include "version.h"
 
 #define MUL_ADDRESS		"route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0"
 #define DEFAULT_ROUTE 	"route add default gw 192.168.36.1"
+#define HW_ADDRESS      "ifconfig eth0 hw ether 00:AA:BB:CC:DD:EE"
 
 int init_eth(void)
 {
+    char tmp;
     char syscmd[200];
     
     printf("\ninit eth start \n");
@@ -27,16 +30,21 @@ int init_eth(void)
     #if 1
     //Ip set
     system(syscmd);
-    
     //multicast route address configure
     system(MUL_ADDRESS);
     system(DEFAULT_ROUTE);
     #endif
+    //ether address configure 
+    tmp = detect_sw_id();
+    sprintf(syscmd, "ifconfig eth0 hw ether 00:AA:BB:CC:DD:%x", tmp);
+    system(syscmd);
+    printf(system);
     printf("\ninit eth finish \n");
 
     return 0;
 }
 
+#ifdef SW_KEY
 void * switch_ip(void)
 {
     unsigned char tmp1, tmp2;
@@ -66,5 +74,4 @@ void * switch_ip(void)
     }
    return ;
 }
-
-
+#endif

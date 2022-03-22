@@ -4,5 +4,6 @@
 unsigned char IP_check(void);
 void hdmi_light_turn_on();
 void hdmi_light_turn_off();
+void gpio_init();
 
 #endif

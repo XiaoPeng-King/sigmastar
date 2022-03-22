@@ -39,6 +39,8 @@
 #include "gpio.h"
 #include "uart_watchdog.h"
 #include "hdmi_info.h"
+#include "version.h"
+
 
 #define ASCII_COLOR_RED                          "\033[1;31m"
 #define ASCII_COLOR_WHITE                        "\033[1;37m"
@@ -2151,15 +2153,46 @@ static void init_pre_venc(void)
     vif_bind_vpe();
 }
 
+static int init_configs(void)
+{
+    int ret = 0;
+
+    AppInitCfgInfoDefault();
+    ret = AppInitCfgInfoFromFile();     //mode
+    if (ret<0)
+    {
+        printf("ret = %d\n",ret);
+        printf("build default config.conf \n");
+        AppWriteCfgInfotoFile();
+        system(CP_CONFIG_00);
+        system(CP_CONFIG_01);
+        system(CP_CONFIG_02);
+        system(CP_CONFIG_03);
+        system(CP_CONFIG_04);
+        system(CP_CONFIG_05);
+        system(CP_CONFIG_06);
+        system(CP_CONFIG_07);
+        system(CP_CONFIG_08);
+        system(CP_CONFIG_09);
+        system(CP_CONFIG_10);
+    }
+    else
+    {
+        printf("cfg get from file \n");
+    }
+
+    return 0;
+}
+
 static int init_system(void)
 {
     ExecFunc(MI_SYS_Init(), MI_SUCCESS);
     Sensor_init();
-
+    gpio_init();
     RingInit(); //video ring buffer init
     
     InitShareMem();
-     
+    init_configs();
     init_eth();
 
     init_pre_venc();
@@ -2170,6 +2203,8 @@ static deinit_pre_venc()
     Vif_deinit();
     vpe_deinit();
 }
+
+
 
 #if 1
 int main(int argc, char **argv)
@@ -2198,7 +2233,7 @@ int main(int argc, char **argv)
     sigAction.sa_flags = 0;
     sigaction(SIGINT, &sigAction, NULL);
     #endif
-   
+
     if(venc_read_config_file(&ctx))
     {
         return -1;

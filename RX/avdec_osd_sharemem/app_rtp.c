@@ -349,7 +349,7 @@ Recv:
 		{
 			printf("recv error \n");
 			g_system_attr.display_state.signal_state = EN_ABNORMAL;
-			g_system_attr.display_state.signal_abnormal = EN_NO_TX;
+			g_system_attr.display_state.signal_abnormal = EN_NO_TX; //
 			#if 1
 			if (TRUE == g_system_attr.multicast_change_flag)
 			{

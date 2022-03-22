@@ -5,11 +5,14 @@
 //#include "EEPROM.h"
 //#include "app_rx_io_ctl.h"
 #include "main.h"
+#include "version.h"
 
 #define CONFIG_EEPROM
 
 static int fd_config;
+
 extern SYSTEM_ATTR_s g_system_attr;
+
 int InitShareMem(void)
 {
 	int shmid;
@@ -35,7 +38,7 @@ int InitShareMem(void)
 		g_system_attr.e2prom = 0;
 		printf("\n\n***** e2prom read failed *****\n\n");
 		ret = AppInitCfgInfoFromFile(&fd_config); //reinit share memory form file
-		if (ret < 0) 
+		if (ret < 0)
 		{
 			if(NULL!=fd_config)
 				close(fd_config);
@@ -94,11 +97,11 @@ void *sharemem_handle(void *arg)
 			printf("cec state : %d \n", share_mem->cec_control.cec_state);
 			if (1 == share_mem->cec_control.cec_state) //CEC ON
 			{
-				//UART_CEC_TV_ON();
+				UART_CEC_TV_ON();
 			}
 			else if (2 == share_mem->cec_control.cec_state) //CEC OFF
 			{
-				//UART_CEC_TV_OFF();
+				UART_CEC_TV_OFF();
 			}
 			share_mem->cec_control.cec_state = 0;
 			AppWriteCfgInfotoFile();

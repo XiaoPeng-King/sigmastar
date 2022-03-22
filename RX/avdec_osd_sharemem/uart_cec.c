@@ -23,8 +23,8 @@ static unsigned char ASCII_To_Hex(unsigned char number)
 
 void UART_CEC_TV_ON(void)
 {
-	cec_enable();
-    printf("UART_CEC_TV_ON \n");
+	//cec_enable();
+    printf("\n\nUART_CEC_TV_ON \n\n");
     char On_buff[] = {0xce,0x82,0x40,0x04};
 	char rbuff[5] = {0};
 
@@ -79,8 +79,8 @@ void UART_CEC_TV_ON(void)
 
 void UART_CEC_TV_OFF(void)
 {
-	cec_enable();
-    printf("UART_CEC_TV_OFF \n");
+	//cec_enable();
+    printf("\n\nUART_CEC_TV_OFF \n\n");
 
     char Off_buff[] = {0xce,0x36,0xff,0x36};
 	char rbuff[5] = {0};

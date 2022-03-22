@@ -3,6 +3,7 @@
 #include "sharemem.h"
 #include "linux_common.h"
 #include "cfginfo.h"
+#include "version.h"
 
 char web_flag;
 char g_backup_flag;
@@ -17,7 +18,7 @@ int InitShareMem(void)
 	shmid = GetShareMemoryID((key_t)1234, sizeof(SHARE_MEM), 0666|IPC_CREAT);	
 	if(shmid < 0)  
 	{
-		exit(0);  
+		exit(0);
 	}
 
 	share_mem = (struct shared_use_st*)AttacheShareMemoryToProcess(shmid, (void*)0, 0);  
@@ -25,9 +26,9 @@ int InitShareMem(void)
 	{
 		exit(0);
 	}
-	printf("Memory attached at %X\n", (int)share_mem);  
+	printf("Memory attached at %X\n", (int)share_mem);
 
-    share_mem->sm_eth_setting = eth_setting;     
+    share_mem->sm_eth_setting = eth_setting;
 	AppInitCfgInfoDefault();
 }
 

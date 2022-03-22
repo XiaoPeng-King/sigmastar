@@ -17,12 +17,7 @@
 #include "sharemem.h"
 #include "main.h"
 //#include "EEPROM.h"
-
-//#define CONFIG_FILE ("/user/configs/config.conf")
-//#define CONFIG_FILE ("/tmp/configs/config.conf")
-
-#define CONFIG_FILE ("./config.conf")
-#define CONFIG_EEPROM
+#include "version.h"
 
 extern SYSTEM_ATTR_s g_system_attr;
 

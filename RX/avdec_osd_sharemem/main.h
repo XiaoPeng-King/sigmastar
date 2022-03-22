@@ -38,7 +38,6 @@ typedef struct {
 	bool web_flag; //
 	bool info_display; //
 	bool ip_conflict_flag; //
-
 } SYSTEM_ATTR_s;
 
 

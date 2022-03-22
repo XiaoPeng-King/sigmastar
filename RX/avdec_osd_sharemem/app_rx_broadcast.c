@@ -432,7 +432,7 @@ try_socket:
 			}
 			else
 			{
-
+				printf("\n\n------------------ close display --------------\n\n");
 				g_system_attr.display_state.signal_normal = EN_CLOSE_DISPLAY;
 				
 				g_system_attr.display_flag = 0;
