@@ -43,7 +43,7 @@ typedef struct _reg_cmd_t {
 }reg_cmd_t;
 extern unsigned char g_Exit;
 
-static char get_gpio_value(const unsigned char gpio)
+char get_gpio_value(const unsigned char gpio)
 {
     char value = -1;
     int fd_gpio = -1;
@@ -78,7 +78,7 @@ static char get_gpio_value(const unsigned char gpio)
     return value;
 }
 
-static int set_gpio_value(const unsigned char gpio, unsigned char value)
+int set_gpio_value(const unsigned char gpio, unsigned char value)
 {
     int fd_gpio = -1;
     reg_cmd_t gpio_info;
@@ -198,6 +198,19 @@ void gpio_init()
     set_gpio_value(LED_HDMI, HIGH); //off led of hdmi
     
     return ;
+}
+
+#define KEY_UP1 3
+#define KEY_UP2 4
+
+unsigned char get_up1_value()
+{
+	return get_gpio_value(KEY_UP1);
+}
+
+unsigned char get_up2_value()
+{
+	return get_gpio_value(KEY_UP2);
 }
 
 

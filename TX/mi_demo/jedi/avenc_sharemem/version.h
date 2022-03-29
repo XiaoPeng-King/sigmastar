@@ -29,7 +29,7 @@
 #define CONFIG_FILE1 ("/customer/configs/modeName.conf")
 #define CONFIG_FILE ("/customer/configs/config.conf")
 
-#if 1
+#if 0
 #define SW_KEY //拨码开关
 #else
 #define DIGIT_LED	//数码管

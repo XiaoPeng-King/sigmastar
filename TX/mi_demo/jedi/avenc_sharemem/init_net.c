@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <string.h>
 #include "gpio.h"
+#include "version.h"
 
 #define MUL_ADDRESS		"route add -net 224.0.0.0 netmask 240.0.0.0 dev eth0" 
 #define DEFAULT_ROUTE 	"route add default gw 192.168.36.1"
@@ -29,8 +30,9 @@ int init_eth(void)
 {
     char tmp;
     char syscmd[200];
-    
+#ifdef SW_KEY
     switch_ip();
+#endif
 
     strcpy(syscmd,"ifconfig eth0 ");
     strcat(syscmd,share_mem->sm_eth_setting.strEthIp);
@@ -45,11 +47,12 @@ int init_eth(void)
     system(MUL_ADDRESS);
     system(DEFAULT_ROUTE);
 
-    //
+#ifdef SW_KEY
     tmp = IP_check();
     sprintf(syscmd, "ifconfig eth0 hw ether 00:AA:BB:CC:DD:%x", tmp);
     system(syscmd);
     printf(system);
-    
+#endif
+
     return 0;
 }

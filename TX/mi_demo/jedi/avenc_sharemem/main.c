@@ -40,7 +40,7 @@
 #include "uart_watchdog.h"
 #include "hdmi_info.h"
 #include "version.h"
-
+#include "digit_led.h"
 
 #define ASCII_COLOR_RED                          "\033[1;31m"
 #define ASCII_COLOR_WHITE                        "\033[1;37m"
@@ -2217,6 +2217,7 @@ int main(int argc, char **argv)
     pthread_t control_handle = 0;
     pthread_t backup_handle = 0;
     pthread_t gpio_handle = 0;
+    pthread_t digit_led_handle;
 
     VENC_Ctx_t ctx; //
     memset(&ctx, 0, sizeof(VENC_Ctx_t));
@@ -2258,6 +2259,9 @@ int main(int argc, char **argv)
     
     CreateThread(&control_handle, NULL, (void*)control_slave, NULL);
     //CreateThread(&backup_handle, NULL, (void*)backup_host, NULL);
+    #ifdef DIGIT_LED
+    CreateThread(&digit_led_handle, NULL, digit_led_main, NULL);
+    #endif
 
 #endif
     while (g_Exit) //thread 0
