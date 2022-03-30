@@ -51,13 +51,17 @@ static int H_anjian(void)
     
     flag1++;
     printf(" flag1++ : %d\n",flag1);
-    if ((flag2 >= 4) && (flag1 > 2)) //24
+    if ((flag2 > 4) && (flag1 > 1)) //24
     {
         flag1 = 0;
     }
     if ((flag2 == 0) && (flag1 > 2)) //00
     {
         flag1 = 1;
+    }
+    if ((flag1 > 2) && (flag2 != 0))
+    {
+        flag1 = 0;
     }
 
     digit_led_i2c_write(0x68,numbers[flag1]);

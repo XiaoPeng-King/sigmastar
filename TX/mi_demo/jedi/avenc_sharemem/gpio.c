@@ -200,8 +200,8 @@ void gpio_init()
     return ;
 }
 
-#define KEY_UP1 3
-#define KEY_UP2 4
+#define KEY_UP1 4
+#define KEY_UP2 3
 
 unsigned char get_up1_value()
 {
